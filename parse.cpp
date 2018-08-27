@@ -28,10 +28,10 @@ Expression parse(const TokenSequenceType &tokens) noexcept {
     if (tokens.empty())
         return Expression();
         
-        bool athead = false;
+    bool athead = false;
         
-        // stack tracks the last node created
-        std::stack<Expression *> stack;
+    // stack tracks the last node created
+    std::stack<Expression *> stack;
     
     std::size_t num_tokens_seen = 0;
     
