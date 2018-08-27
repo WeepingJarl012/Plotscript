@@ -212,6 +212,18 @@ TEST_CASE( "Test Interpreter result with simple procedures (sqrt)", "[interprete
     // Add testing for throwing of semantic error
 }
 
+TEST_CASE( "Test Interpreter result with simple procedures (ln)", "[interpreter]" ) {
+    
+    { // log, simple unary case
+        std::string program = "(ln 1)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(0.));
+    }
+    
+    // Add testing for throwing of semantic error
+}
+
 TEST_CASE( "Test Interpreter result with simple procedures (pow)", "[interpreter]" ) {
     
     { // pow, simple binary case
