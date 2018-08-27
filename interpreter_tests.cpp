@@ -212,6 +212,18 @@ TEST_CASE( "Test Interpreter result with simple procedures (sqrt)", "[interprete
     // Add testing for throwing of semantic error
 }
 
+TEST_CASE( "Test Interpreter result with simple procedures (pow)", "[interpreter]" ) {
+    
+    { // pow, simple binary case
+        std::string program = "(^ 3 2)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(9.));
+    }
+    
+    // Add testing for throwing of semantic error
+}
+
 TEST_CASE( "Test Interpreter result with simple procedures (ln)", "[interpreter]" ) {
     
     { // log, simple unary case
@@ -224,13 +236,37 @@ TEST_CASE( "Test Interpreter result with simple procedures (ln)", "[interpreter]
     // Add testing for throwing of semantic error
 }
 
-TEST_CASE( "Test Interpreter result with simple procedures (pow)", "[interpreter]" ) {
+TEST_CASE( "Test Interpreter result with simple procedures (sin)", "[interpreter]" ) {
     
-    { // pow, simple binary case
-        std::string program = "(^ 3 2)";
+    { // sin, simple unary case
+        std::string program = "(sin pi)";
         INFO(program);
         Expression result = run(program);
-        REQUIRE(result == Expression(9.));
+        REQUIRE(result == Expression(0.));
+    }
+    
+    // Add testing for throwing of semantic error
+}
+
+TEST_CASE( "Test Interpreter result with simple procedures (cos)", "[interpreter]" ) {
+    
+    { // sin, simple unary case
+        std::string program = "(cos pi)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(-1.));
+    }
+    
+    // Add testing for throwing of semantic error
+}
+
+TEST_CASE( "Test Interpreter result with simple procedures (tan)", "[interpreter]" ) {
+    
+    { // sin, simple unary case
+        std::string program = "(tan pi)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(0.));
     }
     
     // Add testing for throwing of semantic error
