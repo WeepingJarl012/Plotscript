@@ -104,7 +104,6 @@ Expression div(const std::vector<Expression> & args){
     return Expression(result);
 };
 
-// TODO: needs testing
 Expression sqrt(const std::vector<Expression> & args){
     
     double result = 0;
@@ -117,6 +116,20 @@ Expression sqrt(const std::vector<Expression> & args){
         else {
             throw SemanticError("Error in call to square root: invalid (negative) argument.");
         }
+    }
+    else {
+        throw SemanticError("Error in call to sqaure root: invalid number of arguments");
+    }
+    
+    return Expression(result);
+};
+
+Expression power(const std::vector<Expression> & args){
+    
+    double result = 0;
+    
+    if(nargs_equal(args,2)){
+        result = pow(args[0].head().asNumber(), args[1].head().asNumber());
     }
     else {
         throw SemanticError("Error in call to sqaure root: invalid number of arguments");
@@ -223,4 +236,7 @@ void Environment::reset(){
     
     // Procedure: sqrt;
     envmap.emplace("sqrt", EnvResult(ProcedureType, sqrt));
+    
+    // Procedure: div;
+    envmap.emplace("^", EnvResult(ProcedureType, power));
 }

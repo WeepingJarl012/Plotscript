@@ -198,13 +198,27 @@ TEST_CASE( "Test Interpreter result with simple procedures (add)", "[interpreter
     }
 }
 
+// Test new expressions here
+
 TEST_CASE( "Test Interpreter result with simple procedures (sqrt)", "[interpreter]" ) {
     
-    { // add, unary case
+    { // sqrt, simple unary case
         std::string program = "(sqrt 4)";
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(2.));
+    }
+    
+    // Add testing for throwing of semantic error
+}
+
+TEST_CASE( "Test Interpreter result with simple procedures (pow)", "[interpreter]" ) {
+    
+    { // pow, simple binary case
+        std::string program = "(^ 3 2)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(9.));
     }
     
     // Add testing for throwing of semantic error
