@@ -28,10 +28,11 @@ TEST_CASE( "Test get expression", "[environment]" ) {
     REQUIRE(env.get_exp(Atom("pi")) == Expression(std::atan2(0, -1)));
     REQUIRE(env.get_exp(Atom("hi")) == Expression());
     
-    // Add test for exp
-    
     REQUIRE(env.get_exp(Atom("e")) == Expression(std::exp(1)));
     REQUIRE(env.get_exp(Atom("f")) == Expression());
+    
+    //REQUIRE(env.get_exp(Atom("I")) == Expression());
+    //REQUIRE(env.get_exp(Atom("i")) == Expression());
 }
 
 TEST_CASE( "Test add expression", "[environment]" ) {

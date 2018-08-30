@@ -10,6 +10,7 @@ Atom::Atom(): m_type(NoneKind) {}
 Atom::Atom(double value){
     
     setNumber(value);
+    
 }
 
 Atom::Atom(const Token & token): Atom(){
