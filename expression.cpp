@@ -193,14 +193,18 @@ Expression Expression::eval(Environment & env){
 
 std::ostream & operator<<(std::ostream & out, const Expression & exp){
     
-    out << "(";
+    if (!exp.head().isComplex()){
+        out << "(";  // Paranthesis added
+    }
     out << exp.head();
     
     for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e){
         out << *e;
     }
     
-    out << ")";
+    if (!exp.head().isComplex()){
+        out << ")";
+    }
     
     return out;
 }

@@ -84,7 +84,7 @@ void repl(){
         }
         else{
             try{
-                Expression exp = interp.evaluate();
+                Expression exp = interp.evaluate(); // Output created
                 std::cout << exp << std::endl;
             }
             catch(const SemanticError & ex){
