@@ -202,7 +202,7 @@ Expression tan(const std::vector<Expression> & args){
 
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
-const std::complex<double> I (2.0, 5.0);
+const std::complex<double> I (0.0, 1.0);
 
 Environment::Environment(){
     

@@ -130,7 +130,7 @@ double Atom::asNumber() const noexcept{
 
 std::complex<double> Atom::asComplex() const noexcept{
     
-    return (m_type == ComplexKind) ? complexValue.real() : std::complex<double> (0.0, 0.0);
+    return (m_type == ComplexKind) ? complexValue : std::complex<double> (0.0, 0.0);
 }
 
 

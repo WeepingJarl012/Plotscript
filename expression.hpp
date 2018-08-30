@@ -59,6 +59,9 @@ public:
     /// convienience member to determine if head atom is a number
     bool isHeadNumber() const noexcept;
     
+    /// convenience member to determine if head atom is complex
+    bool isHeadComplex() const noexcept;
+    
     /// convienience member to determine if head atom is a symbol
     bool isHeadSymbol() const noexcept;
     
