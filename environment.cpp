@@ -29,17 +29,17 @@ Expression default_proc(const std::vector<Expression> & args){
 Expression add(const std::vector<Expression> & args){
     
     // check all aruments are numbers, while adding
-    double result = 0;
+    double resultNumber = 0;
     for( auto & a :args){
         if(a.isHeadNumber()){
-            result += a.head().asNumber();
+            resultNumber += a.head().asNumber();
         }
         else{
             throw SemanticError("Error in call to add, argument not a number");
         }
     }
     
-    return Expression(result);
+    return Expression(resultNumber);
 };
 
 Expression mul(const std::vector<Expression> & args){

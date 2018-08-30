@@ -23,6 +23,15 @@ TEST_CASE( "Test constructors", "[atom]" ) {
     }
     
     {
+        INFO("Complex Constructor");
+        Atom a(std::complex<double>(1.0, 2.0));
+        
+        REQUIRE(!a.isNone());
+        REQUIRE(a.isComplex());
+        REQUIRE(!a.isSymbol());
+    }
+    
+    {
         INFO("Symbol Constructor");
         Atom a("hi");
         
