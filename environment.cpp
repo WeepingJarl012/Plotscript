@@ -143,22 +143,33 @@ Expression div(const std::vector<Expression> & args){
 
 Expression sqrt(const std::vector<Expression> & args){
     
-    double result = 0;
+    bool complexArg = false;
+    
+    double realResult = 0;
+    std::complex<double> complexResult;
     
     if(nargs_equal(args,1)){
-        if (args[0].head().asNumber() >= 0){
-            // Square root
-            result = sqrt(args[0].head().asNumber());
-        }
-        else {
-            throw SemanticError("Error in call to square root: invalid (negative) argument.");
+        if (args[0].isHeadNumber() && args[0].head().asNumber() >= 0){
+            realResult = std::sqrt(args[0].head().asNumber());
+        } else if (args[0].isHeadNumber()){
+            complexArg = true;
+            
+            complexResult = std::sqrt(std::complex<double>(args[0].head().asNumber(), 0));
+        } else {
+            complexArg = true;
+            
+            complexResult = std::sqrt(args[0].head().asComplex());
         }
     }
     else {
         throw SemanticError("Error in call to sqaure root: invalid number of arguments");
     }
     
-    return Expression(result);
+    if(complexArg){
+        return Expression(complexResult);
+    } else {
+        return Expression(realResult);
+    }
 };
 
 Expression power(const std::vector<Expression> & args){
@@ -260,7 +271,7 @@ Expression imagPart(const std::vector<Expression> & args){
     double result = 0;
     
     if(nargs_equal(args,1)){
-        if(args[0].head().isComplex()){
+        if(args[0].isHeadComplex()){
             result = args[0].head().asComplex().imag();
         } else {
             throw SemanticError("Error in call to imag: number is not complex");
@@ -278,7 +289,7 @@ Expression mag(const std::vector<Expression> & args){
     double result = 0;
     
     if(nargs_equal(args,1)){
-        if(args[0].head().isComplex()){
+        if(args[0].isHeadComplex()){
             result = std::abs(args[0].head().asComplex());
         } else {
             throw SemanticError("Error in call to mag: number is not complex");
@@ -296,7 +307,7 @@ Expression arg(const std::vector<Expression> & args){
     double result = 0;
     
     if(nargs_equal(args,1)){
-        if(args[0].head().isComplex()){
+        if(args[0].isHeadComplex()){
             result = std::arg(args[0].head().asComplex());
         } else {
             throw SemanticError("Error in call to arg: number is not complex");
@@ -314,7 +325,7 @@ Expression conj(const std::vector<Expression> & args){
     std::complex<double> result = 0;
     
     if(nargs_equal(args,1)){
-        if(args[0].head().isComplex()){
+        if(args[0].isHeadComplex()){
             result = std::conj(args[0].head().asComplex());
         } else {
             throw SemanticError("Error in call to conj: number is not complex");
