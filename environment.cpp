@@ -237,6 +237,42 @@ Expression tan(const std::vector<Expression> & args){
     return Expression(result);
 };
 
+Expression realPart(const std::vector<Expression> & args){
+    
+    double result = 0;
+    
+    if(nargs_equal(args,1)){
+        if(args[0].head().isComplex()){
+            result = args[0].head().asComplex().real();
+        } else {
+            throw SemanticError("Error in call to real: number is not complex");
+        }
+    }
+    else {
+        throw SemanticError("Error in call to cos: invalid number of arguments");
+    }
+    
+    return Expression(result);
+};
+
+Expression imagPart(const std::vector<Expression> & args){
+    
+    double result = 0;
+    
+    if(nargs_equal(args,1)){
+        if(args[0].head().isComplex()){
+            result = args[0].head().asComplex().imag();
+        } else {
+            throw SemanticError("Error in call to real: number is not complex");
+        }
+    }
+    else {
+        throw SemanticError("Error in call to cos: invalid number of arguments");
+    }
+    
+    return Expression(result);
+};
+
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 const std::complex<double> I (0.0, 1.0);
@@ -354,4 +390,10 @@ void Environment::reset(){
     
     // Procedure: tan;
     envmap.emplace("tan", EnvResult(ProcedureType, tan));
+    
+    // Procedure: real;
+    envmap.emplace("real", EnvResult(ProcedureType, realPart));
+    
+    // Procedure: real;
+    envmap.emplace("imag", EnvResult(ProcedureType, imagPart));
 }
