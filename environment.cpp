@@ -249,7 +249,7 @@ Expression realPart(const std::vector<Expression> & args){
         }
     }
     else {
-        throw SemanticError("Error in call to cos: invalid number of arguments");
+        throw SemanticError("Error in call to real: invalid number of arguments");
     }
     
     return Expression(result);
@@ -263,11 +263,65 @@ Expression imagPart(const std::vector<Expression> & args){
         if(args[0].head().isComplex()){
             result = args[0].head().asComplex().imag();
         } else {
-            throw SemanticError("Error in call to real: number is not complex");
+            throw SemanticError("Error in call to imag: number is not complex");
         }
     }
     else {
-        throw SemanticError("Error in call to cos: invalid number of arguments");
+        throw SemanticError("Error in call to imag: invalid number of arguments");
+    }
+    
+    return Expression(result);
+};
+
+Expression mag(const std::vector<Expression> & args){
+    
+    double result = 0;
+    
+    if(nargs_equal(args,1)){
+        if(args[0].head().isComplex()){
+            result = std::abs(args[0].head().asComplex());
+        } else {
+            throw SemanticError("Error in call to mag: number is not complex");
+        }
+    }
+    else {
+        throw SemanticError("Error in call to mag: invalid number of arguments");
+    }
+    
+    return Expression(result);
+};
+
+Expression arg(const std::vector<Expression> & args){
+    
+    double result = 0;
+    
+    if(nargs_equal(args,1)){
+        if(args[0].head().isComplex()){
+            result = std::arg(args[0].head().asComplex());
+        } else {
+            throw SemanticError("Error in call to arg: number is not complex");
+        }
+    }
+    else {
+        throw SemanticError("Error in call to arg: invalid number of arguments");
+    }
+    
+    return Expression(result);
+};
+
+Expression conj(const std::vector<Expression> & args){
+    
+    std::complex<double> result = 0;
+    
+    if(nargs_equal(args,1)){
+        if(args[0].head().isComplex()){
+            result = std::conj(args[0].head().asComplex());
+        } else {
+            throw SemanticError("Error in call to conj: number is not complex");
+        }
+    }
+    else {
+        throw SemanticError("Error in call to conj: invalid number of arguments");
     }
     
     return Expression(result);
@@ -394,6 +448,15 @@ void Environment::reset(){
     // Procedure: real;
     envmap.emplace("real", EnvResult(ProcedureType, realPart));
     
-    // Procedure: real;
+    // Procedure: imag;
     envmap.emplace("imag", EnvResult(ProcedureType, imagPart));
+    
+    // Procedure: mag;
+    envmap.emplace("mag", EnvResult(ProcedureType, mag));
+    
+    // Procedure: arg;
+    envmap.emplace("arg", EnvResult(ProcedureType, arg));
+    
+    // Procedure: conj;
+    envmap.emplace("conj", EnvResult(ProcedureType, conj));
 }
