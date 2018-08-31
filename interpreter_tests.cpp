@@ -263,7 +263,7 @@ TEST_CASE( "Test Interpreter result with simple procedures (sqrt)", "[interprete
         REQUIRE(result == Expression(2.));
     }
     
-    { // sqrt, complex unnary case
+    { // sqrt, simple unnary case complex result
         std::string program = "(sqrt -1)";
         INFO(program);
         Expression result = run(program);
@@ -375,7 +375,8 @@ TEST_CASE( "Test Interpreter result with simple procedures (arg)", "[interpreter
         std::string program = "(arg I)";
         INFO(program);
         Expression result = run(program);
-        REQUIRE(result == Expression(1.5708));
+        std::complex<double> complexNumber (0.0, 1.0);
+        REQUIRE(result == Expression(std::arg(complexNumber)));
     }
     
     // Add testing for throwing of semantic error

@@ -174,6 +174,7 @@ Expression sqrt(const std::vector<Expression> & args){
             complexArg = true;
             
             complexResult = std::sqrt(args[0].head().asComplex());
+            
         }
     }
     else {
@@ -181,6 +182,15 @@ Expression sqrt(const std::vector<Expression> & args){
     }
     
     if(complexArg){
+        
+        if (complexResult.real() < 1e-15) {
+            complexResult.real(0);
+        }
+        
+        if (complexResult.imag() < 1e-15) {
+            complexResult.imag(0);
+        }
+        
         return Expression(complexResult);
     } else {
         return Expression(realResult);
