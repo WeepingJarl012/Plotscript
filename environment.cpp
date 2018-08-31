@@ -338,7 +338,12 @@ Expression arg(const std::vector<Expression> & args){
     
     if(nargs_equal(args,1)){
         if(args[0].isHeadComplex()){
-            result = std::arg(args[0].head().asComplex());
+            // result = std::arg(args[0].head().asComplex());
+            if (args[0].head().asComplex().real() != 0){
+                result = std::arg(args[0].head().asComplex());
+            } else {
+                throw SemanticError("Cannot divide by 0");
+            }
         } else {
             throw SemanticError("Error in call to arg: number is not complex");
         }
