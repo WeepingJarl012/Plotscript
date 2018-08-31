@@ -221,6 +221,23 @@ TEST_CASE( "Test Interpreter result with simple procedures (add)", "[interpreter
     }
 }
 
+TEST_CASE("Test Interpreter result with simple procedures (mul)", "[interpreter]"){
+    
+    { // mul, simple binary case
+        std::string program = "(* 2 1)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(2.0));
+    }
+    
+    { // mul, complex binary case
+        std::string program = "(* I 1)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(0,1)));
+    }
+}
+
 TEST_CASE("Test Interpreter result with simple procedures (subneg)", "[interpreter]"){
     
     { // subneg, negate complex unary case

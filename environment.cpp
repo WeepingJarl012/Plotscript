@@ -63,16 +63,21 @@ Expression mul(const std::vector<Expression> & args){
     
     // check all aruments are numbers, while multiplying
     double realResult = 1;
-    double imagResult = 1;
+    
+    std::complex<double> complexResult (0, 0);
     
     for( auto & a :args){
-        if(a.isHeadNumber()){
+        if(a.isHeadNumber() && !complexArg){
             realResult *= a.head().asNumber();
         } else if (a.isHeadComplex()) {
             complexArg = true;
             
-            realResult = (realResult * a.head().asComplex().real()) - (imagResult * a.head().asComplex().imag());
-            imagResult = (realResult * a.head().asComplex().imag()) + (a.head().asComplex().real() * imagResult);
+            complexResult.real((complexResult.real() * a.head().asComplex().real()) - (complexResult.imag() * a.head().asComplex().imag()));
+            complexResult.imag((complexResult.real() * a.head().asComplex().imag()) + (a.head().asComplex().real() * complexResult.imag()));
+            
+        } else if (a.isHeadNumber()) {
+            complexResult.real((complexResult.real() * a.head().asComplex().real()) - (complexResult.imag() * 0));
+            complexResult.imag((complexResult.real() * 0) + (a.head().asComplex().real() * complexResult.imag()));
         }
         else{
             throw SemanticError("Error in call to mul, argument not a number");
@@ -80,7 +85,7 @@ Expression mul(const std::vector<Expression> & args){
     }
     
     if(complexArg){
-        return Expression(std::complex<double>(realResult, imagResult));
+        return Expression(complexResult);
     } else {
         return Expression(realResult);
     }
