@@ -215,7 +215,13 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
 
 bool Expression::operator==(const Expression & exp) const noexcept{
     
-    bool result = (m_head == exp.m_head);
+    bool result;
+    
+    if(exp.isHeadComplex()) {
+        result = (m_head.asComplex() == exp.m_head.asComplex());
+    } else {
+        result = (m_head == exp.m_head);
+    }
     
     result = result && (m_tail.size() == exp.m_tail.size());
     

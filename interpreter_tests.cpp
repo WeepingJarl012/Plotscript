@@ -274,6 +274,18 @@ TEST_CASE( "Test Interpreter result with simple procedures (tan)", "[interpreter
     // Add testing for throwing of semantic error
 }
 
+TEST_CASE( "Test Interpreter result with simple procedures (conj)", "[interpreter]" ) {
+    
+    { // conj, simple unary case
+        std::string program = "(conj I)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double> (0,-1)));
+    }
+    
+    // Add testing for throwing of semantic error
+}
+
 TEST_CASE( "Test Interpreter special forms: begin and define", "[interpreter]" ) {
     
     {

@@ -253,7 +253,7 @@ Expression realPart(const std::vector<Expression> & args){
     double result = 0;
     
     if(nargs_equal(args,1)){
-        if(args[0].head().isComplex()){
+        if(args[0].isHeadComplex()){
             result = args[0].head().asComplex().real();
         } else {
             throw SemanticError("Error in call to real: number is not complex");
