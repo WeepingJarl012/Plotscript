@@ -33,6 +33,7 @@ Expression add(const std::vector<Expression> & args){
     // check all aruments are numbers, while adding
     double realNumber = 0;
     double imagNumber = 0;
+    
     for( auto & a :args){
         if(a.isHeadNumber()){
             realNumber += a.head().asNumber();
@@ -96,6 +97,11 @@ Expression subneg(const std::vector<Expression> & args){
     if(nargs_equal(args,1)){
         if(args[0].isHeadNumber()){
             realResult = -args[0].head().asNumber();
+        } else if (args[0].isHeadComplex()){
+            complexArg = true;
+            
+            realResult = -args[0].head().asComplex().real();
+            imagResult = -args[0].head().asComplex().imag();
         }
         else{
             throw SemanticError("Error in call to negate: invalid argument.");
@@ -104,13 +110,22 @@ Expression subneg(const std::vector<Expression> & args){
     else if(nargs_equal(args,2)){
         if( (args[0].isHeadNumber()) && (args[1].isHeadNumber()) ){
             realResult = args[0].head().asNumber() - args[1].head().asNumber();
-        } else if( (args[0].isHeadComplex()) || (args[1].isHeadComplex()) ){
+        } else if( args[0].isHeadComplex() && !args[1].isHeadComplex()){
+            complexArg = true;
+            
+            realResult = args[0].head().asComplex().real() - args[1].head().asNumber();
+            imagResult = args[0].head().asComplex().imag();
+        } else if ( !args[0].isHeadComplex() && args[1].isHeadComplex() ){
+            complexArg = true;
+            
+            realResult = args[0].head().asNumber() - args[1].head().asComplex().real();
+            imagResult = -args[1].head().asComplex().imag();
+            
+        } else {
             complexArg = true;
             
             realResult = args[0].head().asComplex().real() - args[1].head().asComplex().real();
             imagResult = args[0].head().asComplex().imag() - args[1].head().asComplex().imag();
-        } else{
-            throw SemanticError("Error in call to subtraction: invalid argument.");
         }
     }
     else{

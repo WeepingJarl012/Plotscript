@@ -185,6 +185,13 @@ TEST_CASE( "Test Interpreter result with simple procedures (add)", "[interpreter
         REQUIRE(result == Expression(3.));
     }
     
+    { // add, complex binary case
+        std::string program = "(+ I 2)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(2, 1)));
+    }
+    
     { // add, 3-ary case
         std::string program = "(+ 1 2 3)";
         INFO(program);
@@ -192,11 +199,56 @@ TEST_CASE( "Test Interpreter result with simple procedures (add)", "[interpreter
         REQUIRE(result == Expression(6.));
     }
     
+    { // add, complex 3-ary case
+        std::string program = "(+ I 2 3)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(5, 1)));
+    }
+    
     { // add, 6-ary case
         std::string program = "(+ 1 2 3 4 5 6)";
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(21.));
+    }
+    
+    { // add, complex 6-ary case
+        std::string program = "(+ I 2 3 4 5 6)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(20, 1)));
+    }
+}
+
+TEST_CASE("Test Interpreter result with simple procedures (subneg)", "[interpreter]"){
+    
+    { // subneg, negate complex unary case
+        std::string program = "(- I)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(0,-1)));
+    }
+    
+    { // subneg, subtract complex binary case
+        std::string program = "(- I 1)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(-1,1)));
+    }
+    
+    { // subneg, subtract complex binary case
+        std::string program = "(- 1 I)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(1,-1)));
+    }
+    
+    { // subneg, subtract complex binary case
+        std::string program = "(- I I)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(0,0)));
     }
 }
 
@@ -209,6 +261,13 @@ TEST_CASE( "Test Interpreter result with simple procedures (sqrt)", "[interprete
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(2.));
+    }
+    
+    { // sqrt, complex unnary case
+        std::string program = "(sqrt -1)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(0, 1)));
     }
     
     // Add testing for throwing of semantic error
@@ -269,6 +328,54 @@ TEST_CASE( "Test Interpreter result with simple procedures (tan)", "[interpreter
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(0.));
+    }
+    
+    // Add testing for throwing of semantic error
+}
+
+TEST_CASE( "Test Interpreter result with simple procedures (real)", "[interpreter]" ) {
+    
+    { // conj, simple unary case
+        std::string program = "(real I)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(0));
+    }
+    
+    // Add testing for throwing of semantic error
+}
+
+TEST_CASE( "Test Interpreter result with simple procedures (imag)", "[interpreter]" ) {
+    
+    { // conj, simple unary case
+        std::string program = "(imag I)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(1));
+    }
+    
+    // Add testing for throwing of semantic error
+}
+
+TEST_CASE( "Test Interpreter result with simple procedures (mag)", "[interpreter]" ) {
+    
+    { // conj, simple unary case
+        std::string program = "(mag I)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(1));
+    }
+    
+    // Add testing for throwing of semantic error
+}
+
+TEST_CASE( "Test Interpreter result with simple procedures (arg)", "[interpreter]" ) {
+    
+    { // conj, simple unary case
+        std::string program = "(arg I)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(1.5708));
     }
     
     // Add testing for throwing of semantic error
