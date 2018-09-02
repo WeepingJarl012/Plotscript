@@ -60,24 +60,29 @@ Expression mul(const std::vector<Expression> & args){
     // TODO Fix multiplication equation
     
     bool complexArg = false;
+    bool firstPass = true;
     
     // check all aruments are numbers, while multiplying
-    double realResult = 1;
-    
     std::complex<double> complexResult (0, 0);
     
     for( auto & a :args){
-        if(a.isHeadNumber() && !complexArg){
-            realResult *= a.head().asNumber();
+        if(firstPass){
+            firstPass = false;
+            if (a.isHeadNumber()) {
+                complexResult.real(a.head().asNumber());
+            } else {
+                complexArg = true;
+                complexResult = a.head().asComplex();
+            }
+            
+        } else if(a.isHeadNumber() && !complexArg){
+            double result = a.head().asNumber() * complexResult.real();
+            complexResult.real(result);
         } else if (a.isHeadComplex()) {
             complexArg = true;
-            
-            complexResult.real((complexResult.real() * a.head().asComplex().real()) - (complexResult.imag() * a.head().asComplex().imag()));
-            complexResult.imag((complexResult.real() * a.head().asComplex().imag()) + (a.head().asComplex().real() * complexResult.imag()));
-            
+            complexResult *= a.head().asComplex();
         } else if (a.isHeadNumber()) {
-            complexResult.real((complexResult.real() * a.head().asComplex().real()) - (complexResult.imag() * 0));
-            complexResult.imag((complexResult.real() * 0) + (a.head().asComplex().real() * complexResult.imag()));
+            complexResult *= a.head().asNumber();
         }
         else{
             throw SemanticError("Error in call to mul, argument not a number");
@@ -87,7 +92,7 @@ Expression mul(const std::vector<Expression> & args){
     if(complexArg){
         return Expression(complexResult);
     } else {
-        return Expression(realResult);
+        return Expression(complexResult.real());
     }
 };
 
@@ -338,12 +343,7 @@ Expression arg(const std::vector<Expression> & args){
     
     if(nargs_equal(args,1)){
         if(args[0].isHeadComplex()){
-            // result = std::arg(args[0].head().asComplex());
-            if (args[0].head().asComplex().real() != 0){
-                result = std::arg(args[0].head().asComplex());
-            } else {
-                throw SemanticError("Cannot divide by 0");
-            }
+            result = std::arg(args[0].head().asComplex());
         } else {
             throw SemanticError("Error in call to arg: number is not complex");
         }
