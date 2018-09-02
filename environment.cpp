@@ -209,16 +209,39 @@ Expression sqrt(const std::vector<Expression> & args){
 
 Expression power(const std::vector<Expression> & args){
     
-    double result = 0;
+    bool complexArg = false;
+    
+    std::complex<double> complexResult;
     
     if(nargs_equal(args,2)){
-        result = pow(args[0].head().asNumber(), args[1].head().asNumber());
-    }
-    else {
+        if (args[0].isHeadComplex() && args[1].isHeadNumber()){
+            complexArg = true;
+            
+            complexResult = pow(args[0].head().asComplex(), args[1].head().asNumber());
+        } else if (args[0].isHeadNumber() && args[1].isHeadComplex()){
+            complexArg = true;
+            
+            complexResult = pow(args[0].head().asNumber(), args[1].head().asComplex());
+        } else {
+            complexResult = pow(args[0].head().asNumber(), args[1].head().asNumber());
+        }
+    } else {
         throw SemanticError("Error in call to power: invalid number of arguments");
     }
     
-    return Expression(result);
+    if(complexArg){
+        if (complexResult.real() < 1e-15) {
+            complexResult.real(0);
+        }
+        
+        if (complexResult.imag() < 1e-15) {
+            complexResult.imag(0);
+        }
+        
+        return Expression(complexResult);
+    } else {
+        return Expression(complexResult.real());
+    }
 };
 
 Expression ln(const std::vector<Expression> & args){

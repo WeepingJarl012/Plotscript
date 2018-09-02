@@ -307,6 +307,13 @@ TEST_CASE( "Test Interpreter result with simple procedures (pow)", "[interpreter
         REQUIRE(result == Expression(9.));
     }
     
+    { // pow, complex binary case
+        std::string program = "(^ I 2)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(0, 0)));
+    }
+    
     // Add testing for throwing of semantic error
 }
 

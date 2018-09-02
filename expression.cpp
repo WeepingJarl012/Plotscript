@@ -206,7 +206,7 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
         out << *e;
     }
     
-    if (!exp.head().isComplex()){
+    if (!exp.isHeadComplex()){
         out << ")";
     }
     
