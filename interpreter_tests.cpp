@@ -298,6 +298,25 @@ TEST_CASE( "Test Interpreter result with simple procedures (sqrt)", "[interprete
     // Add testing for throwing of semantic error
 }
 
+TEST_CASE( "Test Interpreter result with simple procedures (div)", "[interpreter]" ) {
+    
+    { // div, simple binary case
+        std::string program = "(/ 4 2)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(2.));
+    }
+    
+    { // div, complex binary case
+        std::string program = "(/ 3 I)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(0, -3)));
+    }
+    
+    // Add testing for throwing of semantic error
+}
+
 TEST_CASE( "Test Interpreter result with simple procedures (pow)", "[interpreter]" ) {
     
     { // pow, simple binary case
