@@ -242,11 +242,11 @@ Expression power(const std::vector<Expression> & args){
     }
     
     if(complexArg){
-        if (complexResult.real() < 1e-15) {
+        if (complexResult.real() < 1e-15 && complexResult.real() > -1e-15) {
             complexResult.real(0);
         }
         
-        if (complexResult.imag() < 1e-15) {
+        if (complexResult.imag() < 1e-15 && complexResult.imag() > -1e-15) {
             complexResult.imag(0);
         }
         

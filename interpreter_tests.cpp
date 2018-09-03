@@ -330,7 +330,7 @@ TEST_CASE( "Test Interpreter result with simple procedures (pow)", "[interpreter
         std::string program = "(^ I 2)";
         INFO(program);
         Expression result = run(program);
-        REQUIRE(result == Expression(std::complex<double>(0, 0)));
+        REQUIRE(result == Expression(std::complex<double>(-1, 0)));
     }
     
     // Add testing for throwing of semantic error
