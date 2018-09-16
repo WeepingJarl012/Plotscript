@@ -19,10 +19,6 @@ Atom::Atom(std::complex<double> value){
     
 }
 
-Atom::Atom(const std::list<Atom> & value){
-    setList(value);
-}
-
 Atom::Atom(const Token & token): Atom(){
     
     // is token a number?
@@ -68,11 +64,8 @@ Atom & Atom::operator=(const Atom & x){
         else if(x.m_type == ComplexKind){
             setComplex(x.complexValue);
         }
-        else if(x.m_type == SymbolKind){
+        else if(x.m_type == SymbolKind || x.m_type == ListKind){
             setSymbol(x.stringValue);
-        }
-        else if(x.m_type == ListKind){
-            setList(x.listValue);
         }
     }
     return *this;
@@ -120,21 +113,18 @@ void Atom::setComplex(std::complex<double> value){
     complexValue = value;
 }
 
-void Atom::setList(const std::list<Atom> & value){
-    
-    m_type = ListKind;
-    
-    listValue = value;
-}
-
 void Atom::setSymbol(const std::string & value){
     
     // we need to ensure the destructor of the symbol string is called
-    if(m_type == SymbolKind){
+    if(m_type == SymbolKind || m_type == ListKind){
         stringValue.~basic_string();
     }
     
-    m_type = SymbolKind;
+    if(value == "list"){
+        m_type = ListKind;
+    } else {
+        m_type = SymbolKind;
+    }
     
     // copy construct in place
     new (&stringValue) std::string(value);
@@ -150,17 +140,11 @@ std::complex<double> Atom::asComplex() const noexcept{
     return (m_type == ComplexKind) ? complexValue : std::complex<double> (0.0, 0.0);
 }
 
-std::list<Atom> Atom::asList() const noexcept{
-    
-    return (m_type == ListKind) ? listValue : std::list<Atom> {0};
-}
-
-
 std::string Atom::asSymbol() const noexcept{
     
     std::string result;
     
-    if(m_type == SymbolKind){
+    if(m_type == SymbolKind || m_type == ListKind){
         result = stringValue;
     }
     

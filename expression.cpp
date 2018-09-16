@@ -13,6 +13,14 @@ Expression::Expression(const Atom & a){
     m_head = a;
 }
 
+Expression::Expression(const Atom & head, const std::list<Expression> list){
+    m_head = head;
+    
+    for(auto i: list){
+        m_tail.push_back(i);
+    }
+}
+
 // recursive copy
 Expression::Expression(const Expression & a){
     
@@ -177,16 +185,13 @@ Expression Expression::handle_list(Environment & env){
         return Expression();
     } else {
         // evaluate each arg from tail, return the last
-        std::list<Atom> results = {};
+        std::list<Expression> results = {};
+        Atom listHead = m_head;
         // Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it
         for(Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it){
-            if (it->isHeadNumber()){
-                results.push_back(it->head().asNumber());
-            } else if (it->isHeadComplex()){
-                results.push_back(it->head().asComplex());
-            }
+            results.push_back(it->eval(env));
         }
-        return Expression(results);
+        return Expression(listHead, results);
     }
     
 }
@@ -196,7 +201,7 @@ Expression Expression::handle_list(Environment & env){
 // this limits the practical depth of our AST
 Expression Expression::eval(Environment & env){
     
-    if(m_tail.empty() && m_head.asSymbol() != "list"){
+    if(m_tail.empty() && !m_head.isList()){
         return handle_lookup(m_head, env);
     }
     // handle begin special-form
@@ -208,7 +213,7 @@ Expression Expression::eval(Environment & env){
         return handle_define(env);
     }
     // handle define special-form
-    else if(m_head.isSymbol() && m_head.asSymbol() == "list"){
+    else if(m_head.isList()){
         return handle_list(env);
     }
     // else attempt to treat as procedure
@@ -230,20 +235,18 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
         out << "(";  // Paranthesis added
     }
     
-    if (exp.isHeadList()){
-        // Here
-        for (Atom i: exp.head().asList()){
-            out << i;
-        }
+    if (!exp.isHeadList()){
+        out << exp.head();
     }
-    out << exp.head();
     
     for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e){
         out << *e;
     }
     
     if (!exp.isHeadComplex()){
-        out << ")";
+        out << ")" << " ";
+    } else {
+        out << " ";
     }
     
     return out;
@@ -255,8 +258,6 @@ bool Expression::operator==(const Expression & exp) const noexcept{
     
     if(exp.isHeadComplex()) {
         result = (m_head.asComplex() == exp.m_head.asComplex());
-    } else if(exp.isHeadList()){
-        result = (m_head.asList() == exp.m_head.asList());
     } else {
         result = (m_head == exp.m_head);
     }

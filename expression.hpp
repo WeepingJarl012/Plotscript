@@ -32,6 +32,9 @@ public:
      */
     Expression(const Atom & a);
     
+    /// Construct an Expression for list given a list of expressions
+    Expression(const Atom & head, const std::list<Expression>);
+    
     /// deep-copy construct an expression (recursive)
     Expression(const Expression & a);
     

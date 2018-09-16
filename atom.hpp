@@ -27,9 +27,6 @@ public:
     /// Construct an Atom of type complex with value
     Atom(std::complex<double> value);
     
-    /// Construct an Atom of type List named value
-    Atom(const std::list<Atom> & value);
-    
     /// Construct an Atom of type Symbol named value
     Atom(const std::string & value);
     
@@ -66,9 +63,6 @@ public:
     /// Value of Atom as a complex number, return (0.0, 0.0) if not a Complex Number
     std::complex<double> asComplex() const noexcept;
     
-    /// Value of Atom as a list, return {0} if not a List
-    std::list<Atom> asList() const noexcept;
-    
     /// value of Atom as a number, returns empty-string if not a Symbol
     std::string asSymbol() const noexcept;
     
@@ -88,7 +82,6 @@ private:
     union {
         std::complex<double> complexValue;
         std::string stringValue;
-        std::list<Atom> listValue = {};
     };
     
     // helper to set type and value of Number
@@ -96,9 +89,6 @@ private:
     
     // helper to set type and value of Complex
     void setComplex(std::complex<double> value);
-    
-    // helper to set type and value of List
-    void setList(const std::list<Atom> & value);
     
     // helper to set type and value of Symbol
     void setSymbol(const std::string & value);
