@@ -19,6 +19,10 @@ Atom::Atom(std::complex<double> value){
     
 }
 
+Atom::Atom(const std::list<Atom> & value){
+    setList(value);
+}
+
 Atom::Atom(const Token & token): Atom(){
     
     // is token a number?
@@ -67,6 +71,9 @@ Atom & Atom::operator=(const Atom & x){
         else if(x.m_type == SymbolKind){
             setSymbol(x.stringValue);
         }
+        else if(x.m_type == ListKind){
+            setList(x.listValue);
+        }
     }
     return *this;
 }
@@ -93,8 +100,11 @@ bool Atom::isComplex() const noexcept{
 
 bool Atom::isSymbol() const noexcept{
     return m_type == SymbolKind;
-}  
+}
 
+bool Atom::isList() const noexcept{
+    return m_type == ListKind;
+}
 
 void Atom::setNumber(double value){
     
@@ -108,6 +118,13 @@ void Atom::setComplex(std::complex<double> value){
     m_type = ComplexKind;
     
     complexValue = value;
+}
+
+void Atom::setList(const std::list<Atom> & value){
+    
+    m_type = ListKind;
+    
+    listValue = value;
 }
 
 void Atom::setSymbol(const std::string & value){
@@ -131,6 +148,11 @@ double Atom::asNumber() const noexcept{
 std::complex<double> Atom::asComplex() const noexcept{
     
     return (m_type == ComplexKind) ? complexValue : std::complex<double> (0.0, 0.0);
+}
+
+std::list<Atom> Atom::asList() const noexcept{
+    
+    return (m_type == ListKind) ? listValue : std::list<Atom> {0};
 }
 
 

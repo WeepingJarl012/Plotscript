@@ -65,6 +65,9 @@ public:
     /// convienience member to determine if head atom is a symbol
     bool isHeadSymbol() const noexcept;
     
+    /// convienience member to determine if head atom is a list
+    bool isHeadList() const noexcept;
+    
     /// Evaluate expression using a post-order traversal (recursive)
     Expression eval(Environment & env);
     
@@ -87,6 +90,7 @@ private:
     Expression handle_lookup(const Atom & head, const Environment & env);
     Expression handle_define(Environment & env);
     Expression handle_begin(Environment & env);
+    Expression handle_list(Environment & env);
 };
 
 /// Render expression to output stream
