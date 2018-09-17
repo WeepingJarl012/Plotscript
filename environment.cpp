@@ -419,13 +419,17 @@ Expression first(const std::vector<Expression> & args){
             for (Expression::ConstIteratorType i = args[0].tailConstBegin(); i != args[0].tailConstEnd(); i++){
                 results.push_back(*i);
             }
-            result = results.front();
+            if (!results.empty()){
+                result = results.front();
+            } else {
+                throw SemanticError("Error: argument to first is an empty list");
+            }
         } else {
-            throw SemanticError("Error in call to first: argument is not list");
+            throw SemanticError("Error: argument to first is not a list");
         }
     }
     else {
-        throw SemanticError("Error in call to first: invalid number of arguments");
+        throw SemanticError("Error: more than one argument in call to first");
     }
     
     return result;
