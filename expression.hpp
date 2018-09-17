@@ -32,9 +32,6 @@ public:
      */
     Expression(const Atom & a);
     
-    /// Construct an Expression for list given a list of expressions
-    Expression(const Atom & head, const std::list<Expression>);
-    
     /// deep-copy construct an expression (recursive)
     Expression(const Expression & a);
     
@@ -46,6 +43,9 @@ public:
     
     /// return a const-reference to the head Atom
     const Atom & head() const;
+    
+    /// set head equal to atom
+    void setHead(const Atom & a);
     
     /// append Atom to tail of the expression
     void append(const Atom & a);

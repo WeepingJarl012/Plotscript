@@ -13,14 +13,6 @@ Expression::Expression(const Atom & a){
     m_head = a;
 }
 
-Expression::Expression(const Atom & head, const std::list<Expression> list){
-    m_head = head;
-    
-    for(auto i: list){
-        m_tail.push_back(i);
-    }
-}
-
 // recursive copy
 Expression::Expression(const Expression & a){
     
@@ -69,10 +61,13 @@ bool Expression::isHeadList() const noexcept{
     return m_head.isList();
 }
 
+void Expression::setHead(const Atom & a){
+    m_head = a;
+}
+
 void Expression::append(const Atom & a){
     m_tail.emplace_back(a);
 }
-
 
 Expression * Expression::tail(){
     Expression * ptr = nullptr;
@@ -181,17 +176,15 @@ Expression Expression::handle_define(Environment & env){
 
 Expression Expression::handle_list(Environment & env){
     
+    Expression result = m_head;
+    
     if(m_tail.size() == 0){
-        return Expression();
+        return result;
     } else {
-        // evaluate each arg from tail, return the last
-        std::list<Expression> results = {};
-        Atom listHead = m_head;
-        // Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it
         for(Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it){
-            results.push_back(it->eval(env));
+            result.m_tail.push_back(it->eval(env));
         }
-        return Expression(listHead, results);
+        return result;
     }
     
 }
@@ -241,12 +234,15 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
     
     for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e){
         out << *e;
+        auto f = e;
+        f++;
+        if (f != exp.tailConstEnd()){
+            out << " ";
+        }
     }
     
     if (!exp.isHeadComplex()){
-        out << ")" << " ";
-    } else {
-        out << " ";
+        out << ")";
     }
     
     return out;
@@ -258,6 +254,8 @@ bool Expression::operator==(const Expression & exp) const noexcept{
     
     if(exp.isHeadComplex()) {
         result = (m_head.asComplex() == exp.m_head.asComplex());
+    } else if(exp.isHeadList()){
+        result = (m_head.asSymbol() == exp.m_head.asSymbol());
     } else {
         result = (m_head == exp.m_head);
     }
