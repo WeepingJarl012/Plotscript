@@ -55,13 +55,19 @@ bool Expression::isHeadComplex() const noexcept{
 
 bool Expression::isHeadSymbol() const noexcept{
     return m_head.isSymbol();
-}  
+}
 
+bool Expression::isHeadList() const noexcept{
+    return m_head.isList();
+}
+
+void Expression::setHead(const Atom & a){
+    m_head = a;
+}
 
 void Expression::append(const Atom & a){
     m_tail.emplace_back(a);
 }
-
 
 Expression * Expression::tail(){
     Expression * ptr = nullptr;
@@ -168,12 +174,27 @@ Expression Expression::handle_define(Environment & env){
     return result;
 }
 
+Expression Expression::handle_list(Environment & env){
+    
+    Expression result = m_head;
+    
+    if(m_tail.size() == 0){
+        return result;
+    } else {
+        for(Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it){
+            result.m_tail.push_back(it->eval(env));
+        }
+        return result;
+    }
+    
+}
+
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
 // this limits the practical depth of our AST
 Expression Expression::eval(Environment & env){
     
-    if(m_tail.empty()){
+    if(m_tail.empty() && !m_head.isList()){
         return handle_lookup(m_head, env);
     }
     // handle begin special-form
@@ -183,6 +204,10 @@ Expression Expression::eval(Environment & env){
     // handle define special-form
     else if(m_head.isSymbol() && m_head.asSymbol() == "define"){
         return handle_define(env);
+    }
+    // handle define special-form
+    else if(m_head.isList()){
+        return handle_list(env);
     }
     // else attempt to treat as procedure
     else{ 
@@ -197,13 +222,23 @@ Expression Expression::eval(Environment & env){
 
 std::ostream & operator<<(std::ostream & out, const Expression & exp){
     
+    /// Final output handled
+    
     if (!exp.isHeadComplex()){
         out << "(";  // Paranthesis added
     }
-    out << exp.head();
+    
+    if (!exp.isHeadList()){
+        out << exp.head();
+    }
     
     for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e){
         out << *e;
+        auto f = e;
+        f++;
+        if (f != exp.tailConstEnd()){
+            out << " ";
+        }
     }
     
     if (!exp.isHeadComplex()){
@@ -219,6 +254,8 @@ bool Expression::operator==(const Expression & exp) const noexcept{
     
     if(exp.isHeadComplex()) {
         result = (m_head.asComplex() == exp.m_head.asComplex());
+    } else if(exp.isHeadList()){
+        result = (m_head.asSymbol() == exp.m_head.asSymbol());
     } else {
         result = (m_head == exp.m_head);
     }

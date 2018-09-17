@@ -64,7 +64,7 @@ Atom & Atom::operator=(const Atom & x){
         else if(x.m_type == ComplexKind){
             setComplex(x.complexValue);
         }
-        else if(x.m_type == SymbolKind){
+        else if(x.m_type == SymbolKind || x.m_type == ListKind){
             setSymbol(x.stringValue);
         }
     }
@@ -93,8 +93,11 @@ bool Atom::isComplex() const noexcept{
 
 bool Atom::isSymbol() const noexcept{
     return m_type == SymbolKind;
-}  
+}
 
+bool Atom::isList() const noexcept{
+    return m_type == ListKind;
+}
 
 void Atom::setNumber(double value){
     
@@ -113,11 +116,15 @@ void Atom::setComplex(std::complex<double> value){
 void Atom::setSymbol(const std::string & value){
     
     // we need to ensure the destructor of the symbol string is called
-    if(m_type == SymbolKind){
+    if(m_type == SymbolKind || m_type == ListKind){
         stringValue.~basic_string();
     }
     
-    m_type = SymbolKind;
+    if(value == "list"){
+        m_type = ListKind;
+    } else {
+        m_type = SymbolKind;
+    }
     
     // copy construct in place
     new (&stringValue) std::string(value);
@@ -133,12 +140,11 @@ std::complex<double> Atom::asComplex() const noexcept{
     return (m_type == ComplexKind) ? complexValue : std::complex<double> (0.0, 0.0);
 }
 
-
 std::string Atom::asSymbol() const noexcept{
     
     std::string result;
     
-    if(m_type == SymbolKind){
+    if(m_type == SymbolKind || m_type == ListKind){
         result = stringValue;
     }
     

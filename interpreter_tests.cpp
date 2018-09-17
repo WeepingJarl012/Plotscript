@@ -452,6 +452,50 @@ TEST_CASE( "Test Interpreter result with simple procedures (conj)", "[interprete
     // Add testing for throwing of semantic error
 }
 
+TEST_CASE( "Test Interpreter result with simple procedures (list)", "[interpreter]" ) {
+    
+    { // list, simple empty list
+        std::string program = "(list)";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        REQUIRE(result == expectedResult);
+    }
+    
+    { // list, simple list with one real number
+        std::string program = "(list 1)";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        expectedResult.append(Atom(1));
+        REQUIRE(result == Expression(expectedResult));
+    }
+    
+    { // list, simple list with one complex number
+        std::string program = "(list I)";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        expectedResult.append(Atom(std::complex<double>(0,1)));
+        REQUIRE(result == Expression(expectedResult));
+    }
+    
+    
+    
+    { // list, list of list
+        std::string program = "(list (list))";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        expectedResult.append(Atom("list"));
+        REQUIRE(result == Expression(expectedResult));
+    }
+}
+
 TEST_CASE( "Test Interpreter special forms: begin and define", "[interpreter]" ) {
     
     {

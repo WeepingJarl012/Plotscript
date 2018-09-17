@@ -44,6 +44,9 @@ public:
     /// return a const-reference to the head Atom
     const Atom & head() const;
     
+    /// set head equal to atom
+    void setHead(const Atom & a);
+    
     /// append Atom to tail of the expression
     void append(const Atom & a);
     
@@ -64,6 +67,9 @@ public:
     
     /// convienience member to determine if head atom is a symbol
     bool isHeadSymbol() const noexcept;
+    
+    /// convienience member to determine if head atom is a list
+    bool isHeadList() const noexcept;
     
     /// Evaluate expression using a post-order traversal (recursive)
     Expression eval(Environment & env);
@@ -87,6 +93,7 @@ private:
     Expression handle_lookup(const Atom & head, const Environment & env);
     Expression handle_define(Environment & env);
     Expression handle_begin(Environment & env);
+    Expression handle_list(Environment & env);
 };
 
 /// Render expression to output stream

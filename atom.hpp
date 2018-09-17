@@ -8,6 +8,7 @@
 
 #include <complex>
 #include <iostream>
+#include <list>
 
 /*! \class Atom
  \brief A variant type that may be a Number or Symbol or the default type None.
@@ -47,11 +48,14 @@ public:
     /// predicate to determine if an Atom is of type Number
     bool isNumber() const  noexcept;
     
-    /// predicate to determin if an Atom is of type complex
+    /// predicate to determine if an Atom is of type complex
     bool isComplex() const noexcept;
     
     /// predicate to determine if an Atom is of type Symbol
     bool isSymbol() const noexcept;
+    
+    /// predicate to determine if an Atom is of type List
+    bool isList() const noexcept;
     
     /// value of Atom as a number, return 0 if not a Number
     double asNumber() const noexcept;
@@ -68,7 +72,7 @@ public:
 private:
     
     // internal enum of known types
-    enum Type {NoneKind, NumberKind, ComplexKind, SymbolKind};
+    enum Type {NoneKind, NumberKind, ComplexKind, ListKind, SymbolKind};
     
     // track the type
     Type m_type;
