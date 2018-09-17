@@ -408,6 +408,29 @@ Expression conj(const std::vector<Expression> & args){
     return Expression(result);
 };
 
+Expression first(const std::vector<Expression> & args){
+    
+    Expression result;
+    
+    std::list<Expression> results;
+    
+    if(nargs_equal(args,1)){
+        if(args[0].isHeadList()){
+            for (Expression::ConstIteratorType i = args[0].tailConstBegin(); i != args[0].tailConstEnd(); i++){
+                results.push_back(*i);
+            }
+            result = results.front();
+        } else {
+            throw SemanticError("Error in call to first: argument is not list");
+        }
+    }
+    else {
+        throw SemanticError("Error in call to first: invalid number of arguments");
+    }
+    
+    return result;
+};
+
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 const std::complex<double> I (0.0, 1.0);
@@ -540,4 +563,7 @@ void Environment::reset(){
     
     // Procedure: conj;
     envmap.emplace("conj", EnvResult(ProcedureType, conj));
+    
+    // Procedure: first;
+    envmap.emplace("first", EnvResult(ProcedureType, first));
 }
