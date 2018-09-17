@@ -27,6 +27,24 @@ Expression run(const std::string & program){
     return result;
 }
 
+Expression runError(const std::string & program){
+    
+    std::istringstream iss(program);
+    
+    Interpreter interp;
+    
+    bool ok = interp.parseStream(iss);
+    if(!ok){
+        std::cerr << "Failed to parse: " << program << std::endl;
+    }
+    REQUIRE(ok == true);
+    
+    Expression result;
+    REQUIRE_THROWS(result = interp.evaluate());
+    
+    return result;
+}
+
 TEST_CASE( "Test Interpreter parser with expected input", "[interpreter]" ) {
     
     std::string program = "(begin (define r 10) (* pi (* r r)))";
@@ -459,6 +477,37 @@ TEST_CASE( "Test Interpreter result with simple procedures (first)", "[interpret
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(1));
+    }
+    
+    { // rest, throws semantic error when list is empty
+        Interpreter interp;
+        std::string program = "(first (list))";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+}
+
+TEST_CASE( "Test Interpreter result with simple procedures (rest)", "[interpreter]" ) {
+    
+    { // rest, simple case of rest
+        std::string program = "(rest (list 1 2 3))";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        expectedResult.append(Atom(2));
+        expectedResult.append(Atom(3));
+        REQUIRE(result == Expression(expectedResult));
+    }
+    
+    { // rest, throws semantic error when list is empty
+        Interpreter interp;
+        std::string program = "(rest (list))";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
     }
     
 }

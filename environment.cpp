@@ -435,6 +435,35 @@ Expression first(const std::vector<Expression> & args){
     return result;
 };
 
+Expression rest(const std::vector<Expression> & args){
+    
+    bool listEmpty = true;
+    Expression result;
+    result.setHead(Atom("list"));
+    
+    if(nargs_equal(args,1)){
+        if(args[0].isHeadList()){
+            for (Expression::ConstIteratorType i = args[0].tailConstBegin(); i != args[0].tailConstEnd(); i++){
+                if (i != args[0].tailConstBegin()){
+                    result.append(*i);
+                }
+                listEmpty = false;
+            }
+            
+            if(listEmpty){
+                throw SemanticError("Error: argument to rest is an empty list");
+            }
+        } else {
+            throw SemanticError("Error: argument to rest is not a list");
+        }
+    }
+    else {
+        throw SemanticError("Error: more than one argument in call to rest");
+    }
+    
+    return result;
+};
+
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 const std::complex<double> I (0.0, 1.0);
@@ -570,4 +599,7 @@ void Environment::reset(){
     
     // Procedure: first;
     envmap.emplace("first", EnvResult(ProcedureType, first));
+    
+    // Procedure: rest;
+    envmap.emplace("rest", EnvResult(ProcedureType, rest));
 }

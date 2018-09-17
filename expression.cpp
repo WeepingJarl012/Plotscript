@@ -69,6 +69,10 @@ void Expression::append(const Atom & a){
     m_tail.emplace_back(a);
 }
 
+void Expression::append(const Expression & a){
+    m_tail.emplace_back(a);
+}
+
 Expression * Expression::tail(){
     Expression * ptr = nullptr;
     
