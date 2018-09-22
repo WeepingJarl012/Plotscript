@@ -512,6 +512,27 @@ TEST_CASE( "Test Interpreter result with simple procedures (rest)", "[interprete
     
 }
 
+
+
+TEST_CASE( "Test Interpreter result with simple procedures (length)", "[interpreter]" ) {
+    
+    { // length, simple case of length
+        std::string program = "(length (list 1 2 3))";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(3));
+    }
+    
+    { // length, throws semantic error when argument is not a list
+        Interpreter interp;
+        std::string program = "(length (1 + 2))";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+}
+
 TEST_CASE( "Test Interpreter result with simple procedures (list)", "[interpreter]" ) {
     
     { // list, simple empty list

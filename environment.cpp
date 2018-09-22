@@ -464,6 +464,29 @@ Expression rest(const std::vector<Expression> & args){
     return result;
 };
 
+Expression length(const std::vector<Expression> & args){
+    
+    size_t result;
+    
+    std::list<Expression> results;
+    
+    if(nargs_equal(args,1)){
+        if(args[0].isHeadList()){
+            for (Expression::ConstIteratorType i = args[0].tailConstBegin(); i != args[0].tailConstEnd(); i++){
+                results.push_back(*i);
+            }
+            result = results.size();
+        } else {
+            throw SemanticError("Error: argument to length is not a list");
+        }
+    }
+    else {
+        throw SemanticError("Error: more than one argument in call to length");
+    }
+    
+    return Expression(result);
+};
+
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 const std::complex<double> I (0.0, 1.0);
@@ -602,4 +625,7 @@ void Environment::reset(){
     
     // Procedure: rest;
     envmap.emplace("rest", EnvResult(ProcedureType, rest));
+    
+    // Procedure: length;
+    envmap.emplace("length", EnvResult(ProcedureType, length));
 }
