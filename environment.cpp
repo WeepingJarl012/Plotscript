@@ -487,6 +487,34 @@ Expression length(const std::vector<Expression> & args){
     return Expression(result);
 };
 
+Expression append(const std::vector<Expression> & args){
+
+    Expression result;
+    result.setHead(Atom("list"));
+    
+    if(nargs_equal(args,2)){
+        if(args[0].isHeadList()){
+            for (Expression::ConstIteratorType i = args[0].tailConstBegin(); i != args[0].tailConstEnd(); i++){
+                result.append(*i);
+            }
+            
+            if (args[1].isHeadComplex()){
+                result.append(args[1].head().asComplex());
+            } else if (args[1].isHeadNumber()){
+                result.append(args[1].head().asNumber());
+            }
+            
+        } else {
+            throw SemanticError("Error: argument to append is not a list");
+        }
+    }
+    else {
+        throw SemanticError("Error: wrong number of arguments in call to append");
+    }
+    
+    return result;
+};
+
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 const std::complex<double> I (0.0, 1.0);
@@ -628,4 +656,7 @@ void Environment::reset(){
     
     // Procedure: length;
     envmap.emplace("length", EnvResult(ProcedureType, length));
+    
+    // Procedure: length;
+    envmap.emplace("append", EnvResult(ProcedureType, append));
 }

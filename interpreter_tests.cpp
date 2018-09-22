@@ -512,8 +512,6 @@ TEST_CASE( "Test Interpreter result with simple procedures (rest)", "[interprete
     
 }
 
-
-
 TEST_CASE( "Test Interpreter result with simple procedures (length)", "[interpreter]" ) {
     
     { // length, simple case of length
@@ -526,6 +524,32 @@ TEST_CASE( "Test Interpreter result with simple procedures (length)", "[interpre
     { // length, throws semantic error when argument is not a list
         Interpreter interp;
         std::string program = "(length (1 + 2))";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+}
+
+TEST_CASE( "Test Interpreter result with simple procedures (append)", "[interpreter]" ) {
+    
+    { // append, simple case of append
+        std::string program = "(append (list 1 2 3) (+ 3 (* 4 I)))";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        expectedResult.append(Atom(1));
+        expectedResult.append(Atom(2));
+        expectedResult.append(Atom(3));
+        std::complex<double> complexNum (3, 4);
+        expectedResult.append(Atom(complexNum));
+        REQUIRE(result == Expression(expectedResult));
+    }
+    
+    { // append, throws semantic error when argument is not a list
+        Interpreter interp;
+        std::string program = "(append 1 (1 + 2))";
         INFO(program);
         Expression result = runError(program);
         REQUIRE(result == Expression());
