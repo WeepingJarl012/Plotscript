@@ -557,6 +557,75 @@ TEST_CASE( "Test Interpreter result with simple procedures (append)", "[interpre
     
 }
 
+TEST_CASE( "Test Interpreter result with simple procedures (join)", "[interpreter]" ) {
+    
+    { // join, simple case of join
+        std::string program = "(join (list 1 2 3) (list 4 5))";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        expectedResult.append(Atom(1));
+        expectedResult.append(Atom(2));
+        expectedResult.append(Atom(3));
+        expectedResult.append(Atom(4));
+        expectedResult.append(Atom(5));
+        REQUIRE(result == Expression(expectedResult));
+    }
+    
+    { // join, throws semantic error when either argument is not a list
+        Interpreter interp;
+        std::string program = "(join 1 (list 1 2))";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+}
+
+TEST_CASE( "Test Interpreter result with simple procedures (range)", "[interpreter]" ) {
+    
+    { // range, simple case of range
+        std::string program = "(range 0 5 1)";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        expectedResult.append(Atom(0));
+        expectedResult.append(Atom(1));
+        expectedResult.append(Atom(2));
+        expectedResult.append(Atom(3));
+        expectedResult.append(Atom(4));
+        expectedResult.append(Atom(5));
+        REQUIRE(result == Expression(expectedResult));
+    }
+    
+    { // range, throws semantic error when first argument is less than second
+        Interpreter interp;
+        std::string program = "(range 3 -1 1)";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+    { // range, throws semantic error when any argument is not a number
+        Interpreter interp;
+        std::string program = "(range I -1 1)";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+    { // range, throws semantic error when increment is not positive
+        Interpreter interp;
+        std::string program = "(range 0 5 -1)";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+}
+
 TEST_CASE( "Test Interpreter result with simple procedures (list)", "[interpreter]" ) {
     
     { // list, simple empty list

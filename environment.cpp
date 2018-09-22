@@ -515,6 +515,63 @@ Expression append(const std::vector<Expression> & args){
     return result;
 };
 
+Expression join(const std::vector<Expression> & args){
+    
+    Expression result;
+    result.setHead(Atom("list"));
+    
+    if(nargs_equal(args,2)){
+        if(args[0].isHeadList() && args[1].isHeadList()){
+            // Append list 1 to result
+            for (Expression::ConstIteratorType i = args[0].tailConstBegin(); i != args[0].tailConstEnd(); i++){
+                result.append(*i);
+            }
+            
+            // Append list 2 to result
+            for (Expression::ConstIteratorType i = args[1].tailConstBegin(); i != args[1].tailConstEnd(); i++){
+                result.append(*i);
+            }
+        } else {
+            throw SemanticError("Error: argument to join is not a list");
+        }
+    }
+    else {
+        throw SemanticError("Error: wrong number of arguments in call to join");
+    }
+    
+    return result;
+};
+
+Expression range(const std::vector<Expression> & args){
+    
+    Expression result;
+    result.setHead(Atom("list"));
+    
+    if(nargs_equal(args,3)){
+        if (!args[0].isHeadNumber() || !args[1].isHeadNumber() || !args[2].isHeadNumber()){
+            throw SemanticError("Error: not all arguments were numbers");
+        } else if (args[0].head().asNumber() >= args[1].head().asNumber()){
+            throw SemanticError("Error: begin greater than end in range");
+        } else if (args[2].head().asNumber() <= 0){
+            throw SemanticError("Error: negative or zero increment in range");
+        } else {
+            double begin = args[0].head().asNumber();
+            double end = args[1].head().asNumber();
+            double increment = args[2].head().asNumber();
+            
+            for (double i = begin; i <= end; i += increment){
+                result.append(i);
+            }
+            
+        }
+    }
+    else {
+        throw SemanticError("Error: wrong number of arguments in call to range");
+    }
+    
+    return result;
+};
+
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 const std::complex<double> I (0.0, 1.0);
@@ -657,6 +714,12 @@ void Environment::reset(){
     // Procedure: length;
     envmap.emplace("length", EnvResult(ProcedureType, length));
     
-    // Procedure: length;
+    // Procedure: append;
     envmap.emplace("append", EnvResult(ProcedureType, append));
+    
+    // Procedure: join;
+    envmap.emplace("join", EnvResult(ProcedureType, join));
+    
+    // Procedure: range;
+    envmap.emplace("range", EnvResult(ProcedureType, range));
 }
