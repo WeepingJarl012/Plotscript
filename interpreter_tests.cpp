@@ -203,6 +203,12 @@ TEST_CASE( "Test Interpreter result with simple procedures (add)", "[interpreter
         REQUIRE(result == Expression(3.));
     }
     
+    { // add, throw error
+        std::string program = "(+ a 2)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
     { // add, complex binary case
         std::string program = "(+ I 2)";
         INFO(program);
@@ -248,6 +254,12 @@ TEST_CASE("Test Interpreter result with simple procedures (mul)", "[interpreter]
         REQUIRE(result == Expression(2.0));
     }
     
+    { // mul, throw error
+        std::string program = "(* a 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
     { // mul, complex binary case
         std::string program = "(* I 1)";
         INFO(program);
@@ -271,6 +283,12 @@ TEST_CASE("Test Interpreter result with simple procedures (subneg)", "[interpret
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(std::complex<double>(0,-1)));
+    }
+    
+    { // subneg, throw error
+        std::string program = "(- a)";
+        INFO(program);
+        Expression result = runError(program);
     }
     
     { // subneg, subtract complex binary case
@@ -306,11 +324,24 @@ TEST_CASE( "Test Interpreter result with simple procedures (sqrt)", "[interprete
         REQUIRE(result == Expression(2.));
     }
     
+    { // sqrt, throw error
+        std::string program = "(sqrt 4 4)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
     { // sqrt, simple unnary case complex result
         std::string program = "(sqrt -1)";
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(std::complex<double>(0, 1)));
+    }
+    
+    { // sqrt, simple unnary case complex result complex input
+        std::string program = "(sqrt (* 0 I))";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(0, 0)));
     }
     
     // Add testing for throwing of semantic error
@@ -323,6 +354,25 @@ TEST_CASE( "Test Interpreter result with simple procedures (div)", "[interpreter
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(2.));
+    }
+    
+    { // div, throw error
+        std::string program = "(/ a 2)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
+    { // div, throw error
+        std::string program = "(/ 2 2 2)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
+    { // div, first arg complex second arg double
+        std::string program = "(/ I 1)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(0, 1)));
     }
     
     { // div, complex binary case
@@ -344,11 +394,24 @@ TEST_CASE( "Test Interpreter result with simple procedures (pow)", "[interpreter
         REQUIRE(result == Expression(9.));
     }
     
+    { // pow, throw error
+        std::string program = "(^ 3)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
     { // pow, complex binary case
         std::string program = "(^ I 2)";
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(std::complex<double>(-1, 0)));
+    }
+    
+    { // pow, complex binary case
+        std::string program = "(^ 2 (* I 0))";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(1, 0)));
     }
     
     // Add testing for throwing of semantic error
@@ -363,7 +426,17 @@ TEST_CASE( "Test Interpreter result with simple procedures (ln)", "[interpreter]
         REQUIRE(result == Expression(0.));
     }
     
-    // Add testing for throwing of semantic error
+    { // log, throw error
+        std::string program = "(ln -1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
+    { // log, throw error
+        std::string program = "(ln 1 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (sin)", "[interpreter]" ) {
@@ -375,67 +448,114 @@ TEST_CASE( "Test Interpreter result with simple procedures (sin)", "[interpreter
         REQUIRE(result == Expression(0.));
     }
     
-    // Add testing for throwing of semantic error
+    { // sin, throw error
+        std::string program = "(sin 1 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (cos)", "[interpreter]" ) {
     
-    { // sin, simple unary case
+    { // cos, simple unary case
         std::string program = "(cos pi)";
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(-1.));
     }
     
-    // Add testing for throwing of semantic error
+    { // cos, throw error
+        std::string program = "(cos 1 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (tan)", "[interpreter]" ) {
     
-    { // sin, simple unary case
+    { // tan, simple unary case
         std::string program = "(tan pi)";
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(0.));
     }
     
-    // Add testing for throwing of semantic error
+    { // tan, throw error
+        std::string program = "(tan 1 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (real)", "[interpreter]" ) {
     
-    { // conj, simple unary case
+    { // real, simple unary case
         std::string program = "(real I)";
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(0));
     }
     
-    // Add testing for throwing of semantic error
+    { // real, throw error
+        std::string program = "(real 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
+    { // real, throw error
+        std::string program = "(real 1 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (imag)", "[interpreter]" ) {
     
-    { // conj, simple unary case
+    { // imag, simple unary case
         std::string program = "(imag I)";
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(1));
     }
     
-    // Add testing for throwing of semantic error
+    { // imag, throw error
+        std::string program = "(imag 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
+    { // imag, throw error
+        std::string program = "(imag 1 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (mag)", "[interpreter]" ) {
     
-    { // conj, simple unary case
+    { // mag, simple unary case
         std::string program = "(mag I)";
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(1));
     }
     
-    // Add testing for throwing of semantic error
+    { // mag, throw error
+        std::string program = "(mag 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
+    { // mag, throw error
+        std::string program = "(mag 1 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (arg)", "[interpreter]" ) {
@@ -455,7 +575,18 @@ TEST_CASE( "Test Interpreter result with simple procedures (arg)", "[interpreter
         REQUIRE(result == Expression(0));
     }
     
-    // Add testing for throwing of semantic error
+    { // arg, throw error
+        std::string program = "(arg 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
+    { // arg, throw error
+        std::string program = "(arg 1 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (conj)", "[interpreter]" ) {
@@ -467,7 +598,18 @@ TEST_CASE( "Test Interpreter result with simple procedures (conj)", "[interprete
         REQUIRE(result == Expression(std::complex<double> (0,-1)));
     }
     
-    // Add testing for throwing of semantic error
+    { // conj, throw error
+        std::string program = "(conj 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
+    { // conj, throw error
+        std::string program = "(conj 1 1)";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (first)", "[interpreter]" ) {
@@ -479,9 +621,25 @@ TEST_CASE( "Test Interpreter result with simple procedures (first)", "[interpret
         REQUIRE(result == Expression(1));
     }
     
-    { // rest, throws semantic error when list is empty
+    { // first, throws semantic error when list is empty
         Interpreter interp;
         std::string program = "(first (list))";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+    { // first, throws semantic error when multiple args
+        Interpreter interp;
+        std::string program = "(first (list 1) (list 2))";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+    { // first, throws semantic error when arg is not a list
+        Interpreter interp;
+        std::string program = "(first 1)";
         INFO(program);
         Expression result = runError(program);
         REQUIRE(result == Expression());
@@ -510,6 +668,22 @@ TEST_CASE( "Test Interpreter result with simple procedures (rest)", "[interprete
         REQUIRE(result == Expression());
     }
     
+    { // rest, throws semantic error when multiple args
+        Interpreter interp;
+        std::string program = "(rest (list 1) (list 2))";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+    { // rest, throws semantic error when arg is not a list
+        Interpreter interp;
+        std::string program = "(rest 1)";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (length)", "[interpreter]" ) {
@@ -529,11 +703,27 @@ TEST_CASE( "Test Interpreter result with simple procedures (length)", "[interpre
         REQUIRE(result == Expression());
     }
     
+    { // length, throws semantic error when multiple args
+        Interpreter interp;
+        std::string program = "(length (list 1) (list 2))";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+    { // length, throws semantic error when arg is not a list
+        Interpreter interp;
+        std::string program = "(length 1)";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (append)", "[interpreter]" ) {
     
-    { // append, simple case of append
+    { // append, simple case of append with complex
         std::string program = "(append (list 1 2 3) (+ 3 (* 4 I)))";
         INFO(program);
         Expression result = run(program);
@@ -547,9 +737,30 @@ TEST_CASE( "Test Interpreter result with simple procedures (append)", "[interpre
         REQUIRE(result == Expression(expectedResult));
     }
     
+    { // append, simple case of append with double
+        std::string program = "(append (list 1 2 3) 3)";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        expectedResult.append(Atom(1));
+        expectedResult.append(Atom(2));
+        expectedResult.append(Atom(3));
+        expectedResult.append(Atom(3));
+        REQUIRE(result == Expression(expectedResult));
+    }
+    
     { // append, throws semantic error when argument is not a list
         Interpreter interp;
-        std::string program = "(append 1 (1 + 2))";
+        std::string program = "(append 1 1)";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+    { // append, throws semantic error when wrong number of args given
+        Interpreter interp;
+        std::string program = "(append 1)";
         INFO(program);
         Expression result = runError(program);
         REQUIRE(result == Expression());
@@ -576,6 +787,14 @@ TEST_CASE( "Test Interpreter result with simple procedures (join)", "[interprete
     { // join, throws semantic error when either argument is not a list
         Interpreter interp;
         std::string program = "(join 1 (list 1 2))";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+    { // join, throws semantic error when wrong number of args given
+        Interpreter interp;
+        std::string program = "(join (list 1 2))";
         INFO(program);
         Expression result = runError(program);
         REQUIRE(result == Expression());
@@ -619,6 +838,14 @@ TEST_CASE( "Test Interpreter result with simple procedures (range)", "[interpret
     { // range, throws semantic error when increment is not positive
         Interpreter interp;
         std::string program = "(range 0 5 -1)";
+        INFO(program);
+        Expression result = runError(program);
+        REQUIRE(result == Expression());
+    }
+    
+    { // range, throws semantic error when wrong number of args given
+        Interpreter interp;
+        std::string program = "(range 0 5)";
         INFO(program);
         Expression result = runError(program);
         REQUIRE(result == Expression());
@@ -675,6 +902,12 @@ TEST_CASE( "Test Interpreter special forms: begin and define", "[interpreter]" )
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(42.));
+    }
+    
+    { // begin, throw error
+        std::string program = "(begin)";
+        INFO(program);
+        Expression result = runError(program);
     }
     
     {

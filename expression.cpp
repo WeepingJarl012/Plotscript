@@ -193,6 +193,18 @@ Expression Expression::handle_list(Environment & env){
     
 }
 
+Expression Expression::handle_lambda(Environment & env){
+    Procedure result;
+    Expression test;
+    
+    // must have two arguments
+    if(m_tail.size() != 2){
+        throw SemanticError("Error during evaluation: invalid number of arguments to lambda");
+    }
+    
+    return test;
+}
+
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
 // this limits the practical depth of our AST
@@ -209,7 +221,11 @@ Expression Expression::eval(Environment & env){
     else if(m_head.isSymbol() && m_head.asSymbol() == "define"){
         return handle_define(env);
     }
-    // handle define special-form
+    // handle lambda special-form
+    else if(m_head.isSymbol() && m_head.asSymbol() == "lambda"){
+        return handle_lambda(env);
+    }
+    // handle list special-form
     else if(m_head.isList()){
         return handle_list(env);
     }
