@@ -853,6 +853,31 @@ TEST_CASE( "Test Interpreter result with simple procedures (range)", "[interpret
     
 }
 
+TEST_CASE( "Test Interpreter result with simple procedures (lambda)", "[interpreter]" ) {
+    
+    { // lambda, simple lambda equation
+        std::string program = "(lambda (x y) (/ x y))";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        
+        Expression expectedArguments;
+        expectedArguments.setHead(Atom("list"));
+        expectedArguments.append(Atom("x"));
+        expectedArguments.append(Atom("y"));
+        Expression expectedExpression;
+        expectedExpression.setHead(Atom("/"));
+        expectedExpression.append(Atom("x"));
+        expectedExpression.append(Atom("y"));
+        
+        expectedResult.append(expectedArguments);
+        expectedResult.append(expectedExpression);
+        
+        REQUIRE(result == expectedResult);
+    }
+}
+
 TEST_CASE( "Test Interpreter result with simple procedures (list)", "[interpreter]" ) {
     
     { // list, simple empty list

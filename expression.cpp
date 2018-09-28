@@ -186,7 +186,7 @@ Expression Expression::handle_list(Environment & env){
         return result;
     } else {
         for(Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it){
-            result.m_tail.push_back(it->eval(env));
+            result.append(it->eval(env));  // MAYBE
         }
         return result;
     }
@@ -194,15 +194,42 @@ Expression Expression::handle_list(Environment & env){
 }
 
 Expression Expression::handle_lambda(Environment & env){
-    Procedure result;
-    Expression test;
+    // Procedure procResult;
+    Expression result;
+    Expression arguments;
+    Expression expression;
+    
+    // std::vector<Expression> test;
+    
+    result.setHead(Atom("list"));
+    arguments.setHead(Atom("list"));
+    // expression.setHead(Atom("list"));
     
     // must have two arguments
     if(m_tail.size() != 2){
         throw SemanticError("Error during evaluation: invalid number of arguments to lambda");
+    } else {
+        arguments.append(m_tail[0].head());
+        for(Expression::IteratorType it = m_tail[0].m_tail.begin(); it != m_tail[0].m_tail.end(); ++it){
+            arguments.append(*it);
+            // test.push_back(*it);
+        }
+        
+        // procResult = env.get_proc(m_tail[1].head());
+        
+        
+        expression.setHead(m_tail[1].head());
+        // expression.append(m_tail[1].head());
+        for(Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].m_tail.end(); ++it){
+            expression.append(*it);
+        }
     }
     
-    return test;
+    result.append(arguments);
+    result.append(expression);
+    
+    // return procResult(test);
+    return result;
 }
 
 // this is a simple recursive version. the iterative version is more
@@ -210,6 +237,7 @@ Expression Expression::handle_lambda(Environment & env){
 // this limits the practical depth of our AST
 Expression Expression::eval(Environment & env){
     
+    // TODO: Deal with empty lambda
     if(m_tail.empty() && !m_head.isList()){
         return handle_lookup(m_head, env);
     }
