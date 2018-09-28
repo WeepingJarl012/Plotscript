@@ -61,6 +61,10 @@ bool Expression::isHeadList() const noexcept{
     return m_head.isList();
 }
 
+bool Expression::isHeadLambda() const noexcept{
+    return m_head.isLambda();
+}
+
 void Expression::setHead(const Atom & a){
     m_head = a;
 }
@@ -194,16 +198,12 @@ Expression Expression::handle_list(Environment & env){
 }
 
 Expression Expression::handle_lambda(Environment & env){
-    // Procedure procResult;
     Expression result;
     Expression arguments;
     Expression expression;
     
-    // std::vector<Expression> test;
-    
-    result.setHead(Atom("list"));
+    result.setHead(Atom("lambda"));
     arguments.setHead(Atom("list"));
-    // expression.setHead(Atom("list"));
     
     // must have two arguments
     if(m_tail.size() != 2){
@@ -212,23 +212,15 @@ Expression Expression::handle_lambda(Environment & env){
         arguments.append(m_tail[0].head());
         for(Expression::IteratorType it = m_tail[0].m_tail.begin(); it != m_tail[0].m_tail.end(); ++it){
             arguments.append(*it);
-            // test.push_back(*it);
         }
         
-        // procResult = env.get_proc(m_tail[1].head());
+        expression = m_tail[1];
         
-        
-        expression.setHead(m_tail[1].head());
-        // expression.append(m_tail[1].head());
-        for(Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].m_tail.end(); ++it){
-            expression.append(*it);
-        }
     }
     
     result.append(arguments);
     result.append(expression);
     
-    // return procResult(test);
     return result;
 }
 
@@ -238,7 +230,7 @@ Expression Expression::handle_lambda(Environment & env){
 Expression Expression::eval(Environment & env){
     
     // TODO: Deal with empty lambda
-    if(m_tail.empty() && !m_head.isList()){
+    if(m_tail.empty() && !m_head.isList() && !m_head.isLambda()){
         return handle_lookup(m_head, env);
     }
     // handle begin special-form
@@ -250,7 +242,7 @@ Expression Expression::eval(Environment & env){
         return handle_define(env);
     }
     // handle lambda special-form
-    else if(m_head.isSymbol() && m_head.asSymbol() == "lambda"){
+    else if(m_head.isLambda()){
         return handle_lambda(env);
     }
     // handle list special-form
@@ -276,8 +268,13 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
         out << "(";  // Paranthesis added
     }
     
-    if (!exp.isHeadList()){
+    std::string procs = "+, -, *, /";
+    
+    if (!exp.isHeadList() && !exp.isHeadLambda()){
         out << exp.head();
+        if (exp.isHeadSymbol() && procs.find(exp.head().asSymbol()) != std::string::npos){
+            out << " ";
+        }
     }
     
     for(auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e){

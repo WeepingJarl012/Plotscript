@@ -860,12 +860,13 @@ TEST_CASE( "Test Interpreter result with simple procedures (lambda)", "[interpre
         INFO(program);
         Expression result = run(program);
         Expression expectedResult;
-        expectedResult.setHead(Atom("list"));
+        expectedResult.setHead(Atom("lambda"));
         
         Expression expectedArguments;
         expectedArguments.setHead(Atom("list"));
         expectedArguments.append(Atom("x"));
         expectedArguments.append(Atom("y"));
+        
         Expression expectedExpression;
         expectedExpression.setHead(Atom("/"));
         expectedExpression.append(Atom("x"));

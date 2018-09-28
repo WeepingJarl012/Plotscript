@@ -166,6 +166,16 @@ Expression div(const std::vector<Expression> & args){
         } else {
             throw SemanticError("Error in call to division: invalid argument.");
         }
+    } else if(nargs_equal(args,1)){
+        if( (args[0].isHeadNumber())){
+            complexResult.real(1 / args[0].head().asNumber());
+        } else if ((args[0].isHeadComplex()) && (args[1].isHeadNumber())){
+            complexArg = true;
+            
+            complexResult = pow(args[0].head().asComplex(), -1);
+        }  else {
+            throw SemanticError("Error in call to division: invalid argument.");
+        }
     }
     else{
         throw SemanticError("Error in call to division: invalid number of arguments.");
@@ -572,6 +582,36 @@ Expression range(const std::vector<Expression> & args){
     return result;
 };
 
+Expression apply(const std::vector<Expression> & args){
+    
+    Expression result;
+    result.setHead(Atom("list"));
+    
+    if(nargs_equal(args,3)){
+        if (!args[0].isHeadNumber() || !args[1].isHeadNumber() || !args[2].isHeadNumber()){
+            throw SemanticError("Error: not all arguments were numbers");
+        } else if (args[0].head().asNumber() >= args[1].head().asNumber()){
+            throw SemanticError("Error: begin greater than end in range");
+        } else if (args[2].head().asNumber() <= 0){
+            throw SemanticError("Error: negative or zero increment in range");
+        } else {
+            double begin = args[0].head().asNumber();
+            double end = args[1].head().asNumber();
+            double increment = args[2].head().asNumber();
+            
+            for (double i = begin; i <= end; i += increment){
+                result.append(i);
+            }
+            
+        }
+    }
+    else {
+        throw SemanticError("Error: wrong number of arguments in call to range");
+    }
+    
+    return result;
+};
+
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 const std::complex<double> I (0.0, 1.0);
@@ -615,7 +655,7 @@ void Environment::add_exp(const Atom & sym, const Expression & exp){
     }
     
     // error if overwriting symbol map
-    if(envmap.find(sym.asSymbol()) != envmap.end()){
+    if(envmap.find(sym.asSymbol()) != envmap.end() && !exp.isHeadLambda()){
         throw SemanticError("Attempt to overwrite symbol in environemnt");
     }
     

@@ -64,7 +64,7 @@ Atom & Atom::operator=(const Atom & x){
         else if(x.m_type == ComplexKind){
             setComplex(x.complexValue);
         }
-        else if(x.m_type == SymbolKind || x.m_type == ListKind){
+        else if(x.m_type == SymbolKind || x.m_type == ListKind || x.m_type == LambdaKind){
             setSymbol(x.stringValue);
         }
     }
@@ -99,6 +99,10 @@ bool Atom::isList() const noexcept{
     return m_type == ListKind;
 }
 
+bool Atom::isLambda() const noexcept{
+    return m_type == LambdaKind;
+}
+
 void Atom::setNumber(double value){
     
     m_type = NumberKind;
@@ -116,12 +120,14 @@ void Atom::setComplex(std::complex<double> value){
 void Atom::setSymbol(const std::string & value){
     
     // we need to ensure the destructor of the symbol string is called
-    if(m_type == SymbolKind || m_type == ListKind){
+    if(m_type == SymbolKind || m_type == ListKind || m_type == LambdaKind){
         stringValue.~basic_string();
     }
     
     if(value == "list"){
         m_type = ListKind;
+    } else if (value == "lambda"){
+        m_type = LambdaKind;
     } else {
         m_type = SymbolKind;
     }
@@ -144,7 +150,7 @@ std::string Atom::asSymbol() const noexcept{
     
     std::string result;
     
-    if(m_type == SymbolKind || m_type == ListKind){
+    if(m_type == SymbolKind || m_type == ListKind || m_type == LambdaKind){
         result = stringValue;
     }
     
@@ -197,7 +203,7 @@ std::ostream & operator<<(std::ostream & out, const Atom & a){
     if(a.isComplex()){
         out << a.asComplex();
     }
-    if(a.isSymbol()){
+    if(a.isSymbol() || a.isLambda()){
         out << a.asSymbol();
     }
     return out;

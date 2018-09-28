@@ -57,6 +57,9 @@ public:
     /// predicate to determine if an Atom is of type List
     bool isList() const noexcept;
     
+    /// predicate to determine if an Atom is of type Lambda
+    bool isLambda() const noexcept;
+    
     /// value of Atom as a number, return 0 if not a Number
     double asNumber() const noexcept;
     
@@ -72,7 +75,7 @@ public:
 private:
     
     // internal enum of known types
-    enum Type {NoneKind, NumberKind, ComplexKind, ListKind, SymbolKind};
+    enum Type {NoneKind, NumberKind, ComplexKind, ListKind, LambdaKind, SymbolKind};
     
     // track the type
     Type m_type;
