@@ -250,7 +250,7 @@ Expression Expression::handle_apply(Environment & env){
     
     // must have two arguments
     if(m_tail.size() != 2){
-        throw SemanticError("Error during evaluation: invalid number of arguments to lambda");
+        throw SemanticError("Error during evaluation: invalid number of arguments to apply");
     } else {
         // expression.setHead(m_tail[0].head());
         if (env.is_lambda(m_tail[0].head())){
@@ -274,6 +274,8 @@ Expression Expression::handle_apply(Environment & env){
                 for (auto i = 0; i < identifiers.size(); i++){
                     env.add_exp(identifiers.at(i), values.at(i));
                 }
+            } else {
+                throw SemanticError("Error: during apply: Error in call to procedure: invalid number of arguments.");
             }
             
             result = exp.m_tail[1].eval(env);
@@ -291,6 +293,47 @@ Expression Expression::handle_apply(Environment & env){
     }
     
     return result;
+}
+
+Expression Expression::handle_map(Environment & env){
+    Expression results;
+    Expression currentResult;
+    
+    results.setHead(Atom("list"));
+    
+    if (!env.is_proc(m_tail[0].head()) || m_tail[0].m_tail.size() != 0){
+        throw SemanticError("Error: first argument to map not a procedure");
+    }
+    
+    if (!m_tail[1].isHeadList()){
+        throw SemanticError("Error: second argument to map not a list");
+    }
+    
+    // must have two arguments
+    if(m_tail.size() != 2){
+        throw SemanticError("Error during evaluation: invalid number of arguments to map");
+    } else {
+        
+        for(Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].m_tail.end(); ++it){
+            
+            Expression passToApply;
+            passToApply.setHead(Atom("apply"));
+            passToApply.append(m_tail[0]);
+            passToApply.append((Atom("list")));
+            passToApply.m_tail[1].append(*it);
+            
+            results.append(passToApply.eval(env));
+        }
+        
+        /**
+        for(Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].m_tail.end(); ++it){
+            results.append(it->handle_apply(env));
+        }
+         */
+        
+    }
+    
+    return results;
 }
 
 // this is a simple recursive version. the iterative version is more
@@ -313,6 +356,10 @@ Expression Expression::eval(Environment & env){
     // handle apply special-form
     else if(m_head.isSymbol() && m_head.asSymbol() == "apply"){
         return handle_apply(env);
+    }
+    // handle map special-form
+    else if(m_head.isSymbol() && m_head.asSymbol() == "map"){
+        return handle_map(env);
     }
     // handle lambda special-form
     else if(m_head.isLambda()){
