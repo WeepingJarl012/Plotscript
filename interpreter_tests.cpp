@@ -879,6 +879,35 @@ TEST_CASE( "Test Interpreter result with simple procedures (lambda)", "[interpre
     }
 }
 
+TEST_CASE( "Test Interpreter result with simple procedures (apply)", "[interpreter]" ) {
+    
+    { // apply, simple apply equation
+        std::string program = "(apply + (list 1 2 3 4))";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom(10));
+        
+        REQUIRE(result == expectedResult);
+    }
+    
+    { // apply, throw error first argument not procedure
+        std::string program = "(apply (+ z I) (list 0))";
+        INFO(program);
+        Expression result = runError(program);
+        
+        REQUIRE(result == Expression());
+    }
+    
+    { // apply, throw error second argument not list
+        std::string program = "(apply + 3)";
+        INFO(program);
+        Expression result = runError(program);
+        
+        REQUIRE(result == Expression());
+    }
+}
+
 TEST_CASE( "Test Interpreter result with simple procedures (list)", "[interpreter]" ) {
     
     { // list, simple empty list
