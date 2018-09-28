@@ -597,6 +597,14 @@ bool Environment::is_known(const Atom & sym) const{
     return envmap.find(sym.asSymbol()) != envmap.end();
 }
 
+bool Environment::is_lambda(const Atom & sym) const{
+    if(!is_known(sym)) return false;
+    
+    auto result = envmap.find(sym.asSymbol());
+    
+    return (result->second.exp.isHeadLambda());
+}
+
 bool Environment::is_exp(const Atom & sym) const{
     if(!sym.isSymbol()) return false;
     
@@ -612,6 +620,8 @@ Expression Environment::get_exp(const Atom & sym) const{
         auto result = envmap.find(sym.asSymbol());
         if((result != envmap.end()) && (result->second.type == ExpressionType)){
             exp = result->second.exp;
+        } else if((result != envmap.end()) && (result->second.type == ProcedureType)){
+            exp = result->second.exp;
         }
     }
     
@@ -625,8 +635,9 @@ void Environment::add_exp(const Atom & sym, const Expression & exp){
     }
     
     // error if overwriting symbol map
-    if(envmap.find(sym.asSymbol()) != envmap.end() && !exp.isHeadLambda()){
-        throw SemanticError("Attempt to overwrite symbol in environemnt");
+    if(envmap.find(sym.asSymbol()) != envmap.end()){
+        // throw SemanticError("Attempt to overwrite symbol in environemnt");
+        envmap.erase(sym.asSymbol());
     }
     
     envmap.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp));
@@ -651,6 +662,20 @@ Procedure Environment::get_proc(const Atom & sym) const{
     }
     
     return default_proc;
+}
+
+void Environment::add_proc(const Atom & sym, const Expression & proc){
+    
+    if(!sym.isSymbol()){
+        throw SemanticError("Attempt to add non-symbol to environment");
+    }
+    
+    // error if overwriting symbol map
+    if(envmap.find(sym.asSymbol()) != envmap.end()){
+        envmap.erase(sym.asSymbol());
+    }
+    
+    envmap.emplace(sym.asSymbol(), EnvResult(ProcedureType, proc));
 }
 
 /*

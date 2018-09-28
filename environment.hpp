@@ -49,6 +49,12 @@ public:
      */
     bool is_known(const Atom &sym) const;
     
+    /*! Determine if a symbol is lambda.
+     \param sym the sumbol to lookup
+     \return true if the symbol is lambda
+     */
+    bool is_lambda(const Atom & sym) const;
+    
     /*! Determine if a symbol has been defined as an expression.
      \param sym the sumbol to lookup
      \return true if the symbol has been defined in the environment as an
@@ -82,6 +88,12 @@ public:
      or does not map to a known procedure.
      */
     Procedure get_proc(const Atom &sym) const;
+    
+    /*! Add a mapping from sym argument to the proc argument within the environment.
+     \param sym the symbol to add
+     \param proc the procedure the symbol should map to
+     */
+    void add_proc(const Atom &sym, const Expression &proc);
     
     /*! Reset the environment to its default state. */
     void reset();

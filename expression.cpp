@@ -172,12 +172,24 @@ Expression Expression::handle_define(Environment & env){
     // eval tail[1]
     Expression result = m_tail[1].eval(env);
     
-    if(env.is_exp(m_head)){
-        throw SemanticError("Error during evaluation: attempt to redefine a previously defined symbol");
+    if (!m_tail[1].isHeadLambda()){
+        if(env.is_exp(m_head)){
+            throw SemanticError("Error during evaluation: attempt to redefine a previously defined symbol");
+        }
+        
+        //and add to env
+        env.add_exp(m_tail[0].head(), result);
+    } else {
+        // Procedure proc;
+        /**
+        for(Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].m_tail.end(); ++it){
+            proc = env.get_proc(it->head());
+        }
+         */
+        // proc = env.get_proc(m_tail[1].m_tail[1].head());
+        // env.add_proc(m_tail[0].head(), proc);
+        env.add_proc(m_tail[0].head(), result);
     }
-    
-    //and add to env
-    env.add_exp(m_tail[0].head(), result);
     
     return result;
 }
@@ -240,12 +252,41 @@ Expression Expression::handle_apply(Environment & env){
     if(m_tail.size() != 2){
         throw SemanticError("Error during evaluation: invalid number of arguments to lambda");
     } else {
-        expression.setHead(m_tail[0].head());
-        for(Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].m_tail.end(); ++it){
-            expression.append(*it);
+        // expression.setHead(m_tail[0].head());
+        if (env.is_lambda(m_tail[0].head())){
+            Expression exp = env.get_exp(m_tail[0].head());
+            
+            std::vector<Atom> identifiers;
+            std::vector<Expression> values;
+            std::vector<Expression> results;
+            
+            for(Expression::IteratorType it = exp.m_tail[0].m_tail.begin(); it != exp.m_tail[0].m_tail.end(); ++it){
+                if (it->isHeadSymbol()){
+                    identifiers.push_back(it->m_head.asSymbol());
+                }
+            }
+            
+            for(Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].m_tail.end(); ++it){
+                values.push_back(it->eval(env));
+            }
+            
+            if (identifiers.size() == values.size()){
+                for (auto i = 0; i < identifiers.size(); i++){
+                    env.add_exp(identifiers.at(i), values.at(i));
+                }
+            }
+            
+            result = exp.m_tail[1].eval(env);
+        } else {
+            // Procedures other than lambda
+            std::vector<Expression> results;
+            for(Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].m_tail.end(); ++it){
+                // expression.append(*it);
+                results.push_back(it->eval(env));
+            }
+            
+            result = apply(m_tail[0].head(), results, env);
         }
-        
-        result = expression.eval(env);
     
     }
     
