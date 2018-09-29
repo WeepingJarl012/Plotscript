@@ -95,7 +95,7 @@ Expression::ConstIteratorType Expression::tailConstEnd() const noexcept{
     return m_tail.cend();
 }
 
-Expression apply(const Atom & op, const std::vector<Expression> & args, const Environment & env){
+Expression apply(const Atom & op, const std::vector<Expression> & args, Environment & env){
     
     // head must be a symbol
     if(!op.isSymbol()){
@@ -107,11 +107,27 @@ Expression apply(const Atom & op, const std::vector<Expression> & args, const En
         throw SemanticError("Error during evaluation: symbol does not name a procedure");
     }
     
-    // map from symbol to proc
-    Procedure proc = env.get_proc(op);
-    
-    // call proc with args
-    return proc(args);
+    if (env.is_lambda(op)){
+        Expression passToApply;
+        passToApply.setHead(Atom("apply"));
+        passToApply.append(op);
+        
+        Expression expArguments;
+        expArguments.setHead(Atom("list"));
+        
+        for (auto arg: args){
+            expArguments.append(arg);
+        }
+        passToApply.append(expArguments);
+        
+        return passToApply.eval(env);
+    } else {
+        // map from symbol to proc
+        Procedure proc = env.get_proc(op);
+        
+        // call proc with args
+        return proc(args);
+    }
 }
 
 Expression Expression::handle_lookup(const Atom & head, const Environment & env){
@@ -388,7 +404,7 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp){
         out << "(";  // Paranthesis added
     }
     
-    std::string procs = "+, -, *, /";
+    std::string procs = "+, -, *, /, sin, cos, tan";
     
     if (!exp.isHeadList() && !exp.isHeadLambda()){
         out << exp.head();

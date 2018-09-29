@@ -891,6 +891,16 @@ TEST_CASE( "Test Interpreter result with simple procedures (lambda)", "[interpre
         
         // REQUIRE(result == expectedResult);
     }
+    
+    
+    
+    { // lambda, test calling lambda function
+        std::string program = "(begin (define a 1) (define x 100) (define f (lambda (x) (begin (define b 12) (+ a b x)))) (f 2))";
+        INFO(program);
+        Expression result = run(program);
+        
+        REQUIRE(result == Expression(15));
+    }
 }
 
 TEST_CASE( "Test Interpreter result with simple procedures (apply)", "[interpreter]" ) {
