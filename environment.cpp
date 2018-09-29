@@ -169,7 +169,7 @@ Expression div(const std::vector<Expression> & args){
     } else if(nargs_equal(args,1)){
         if( (args[0].isHeadNumber())){
             complexResult.real(1 / args[0].head().asNumber());
-        } else if ((args[0].isHeadComplex()) && (args[1].isHeadNumber())){
+        } else if ((args[0].isHeadComplex())){
             complexArg = true;
             
             complexResult = pow(args[0].head().asComplex(), -1);
@@ -182,6 +182,14 @@ Expression div(const std::vector<Expression> & args){
     }
     
     if(complexArg){
+        if (complexResult.real() < 1e-15 && complexResult.real() > -1e-15) {
+            complexResult.real(0);
+        }
+        
+        if (complexResult.imag() < 1e-15 && complexResult.imag() > -1e-15) {
+            complexResult.imag(0);
+        }
+        
         return Expression(complexResult);
     } else {
         return Expression(complexResult.real());

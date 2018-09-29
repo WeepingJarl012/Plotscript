@@ -356,6 +356,13 @@ TEST_CASE( "Test Interpreter result with simple procedures (div)", "[interpreter
         REQUIRE(result == Expression(2.));
     }
     
+    { // div, simple unary case
+        std::string program = "(/ 2)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(0.5));
+    }
+    
     { // div, throw error
         std::string program = "(/ a 2)";
         INFO(program);
@@ -380,6 +387,13 @@ TEST_CASE( "Test Interpreter result with simple procedures (div)", "[interpreter
         INFO(program);
         Expression result = run(program);
         REQUIRE(result == Expression(std::complex<double>(0, -3)));
+    }
+    
+    { // div, complex unary case
+        std::string program = "(/ I)";
+        INFO(program);
+        Expression result = run(program);
+        REQUIRE(result == Expression(std::complex<double>(0, -1)));
     }
     
     // Add testing for throwing of semantic error
@@ -891,6 +905,24 @@ TEST_CASE( "Test Interpreter result with simple procedures (apply)", "[interpret
         REQUIRE(result == expectedResult);
     }
     
+    { // apply, with lambda function
+        std::string program = "(begin (define complexAsList (lambda (x) (list (real x) (imag x)))) (apply complexAsList (list (+ 1 (* 3 I)))))";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        expectedResult.append(Atom(1));
+        expectedResult.append(Atom(3));
+        
+        REQUIRE(result == expectedResult);
+    }
+    
+    { // apply, throw error
+        std::string program = "(apply / (list 1 2 4))";
+        INFO(program);
+        Expression result = runError(program);
+    }
+    
     { // apply, throw error first argument not procedure
         std::string program = "(apply (+ z I) (list 0))";
         INFO(program);
@@ -907,6 +939,60 @@ TEST_CASE( "Test Interpreter result with simple procedures (apply)", "[interpret
         REQUIRE(result == Expression());
     }
 }
+
+TEST_CASE( "Test Interpreter result with simple procedures (map)", "[interpreter]" ) {
+    
+    { // map, simple apply equation
+        std::string program = "(map / (list 1 2 4))";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        expectedResult.append(Atom(1));
+        expectedResult.append(Atom(0.5));
+        expectedResult.append(Atom(0.25));
+        
+        REQUIRE(result == expectedResult);
+    }
+    
+    { // map, with lambda function
+        std::string program = "(begin (define f (lambda (x) (sin x))) (map f (list (- pi) (/ (- pi) 2) 0 (/ pi 2) pi)))";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        expectedResult.setHead(Atom("list"));
+        expectedResult.append(Atom(-1.22465e-16));
+        expectedResult.append(Atom(-1));
+        expectedResult.append(Atom(0));
+        expectedResult.append(Atom(1));
+        expectedResult.append(Atom(1.22465e-16));
+        
+        REQUIRE(result == expectedResult);
+    }
+    
+    { // map, throw error first argument not procedure
+        std::string program = "(map 3 (list 1 2 3))";
+        INFO(program);
+        Expression result = runError(program);
+        
+        REQUIRE(result == Expression());
+    }
+    
+    { // map, throw error second argument not list
+        std::string program = "(map + 3)";
+        INFO(program);
+        Expression result = runError(program);
+        
+        REQUIRE(result == Expression());
+    }
+    
+    { // map, throw error in apply when arg is not procedure
+        std::string program = "(begin (define addtwo (lambda (x y) (+ x y))) (map addtwo (list 1 2 3)))";
+        INFO(program);
+        Expression result = runError(program);
+    }
+}
+
 
 TEST_CASE( "Test Interpreter result with simple procedures (list)", "[interpreter]" ) {
     
