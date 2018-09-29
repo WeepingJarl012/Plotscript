@@ -218,7 +218,7 @@ Expression Expression::handle_list(Environment & env){
         return result;
     } else {
         for(Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it){
-            result.append(it->eval(env));  // MAYBE
+            result.append(it->eval(env));
         }
         return result;
     }
@@ -268,7 +268,6 @@ Expression Expression::handle_apply(Environment & env){
     if(m_tail.size() != 2){
         throw SemanticError("Error during evaluation: invalid number of arguments to apply");
     } else {
-        // expression.setHead(m_tail[0].head());
         if (env.is_lambda(m_tail[0].head())){
             Expression exp = env.get_exp(m_tail[0].head());
             
