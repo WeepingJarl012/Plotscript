@@ -225,7 +225,7 @@ Expression Expression::handle_list(Environment & env){
     
 }
 
-Expression Expression::handle_lambda(Environment & env){
+Expression Expression::handle_lambda(){
     Expression result;
     Expression arguments;
     Expression expression;
@@ -286,7 +286,7 @@ Expression Expression::handle_apply(Environment & env){
             }
             
             if (identifiers.size() == values.size()){
-                for (auto i = 0; i < identifiers.size(); i++){
+                for (size_t i = 0; i < identifiers.size(); i++){
                     env.add_exp(identifiers.at(i), values.at(i));
                 }
             } else {
@@ -340,12 +340,6 @@ Expression Expression::handle_map(Environment & env){
             results.append(passToApply.eval(env));
         }
         
-        /**
-        for(Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].m_tail.end(); ++it){
-            results.append(it->handle_apply(env));
-        }
-         */
-        
     }
     
     return results;
@@ -378,7 +372,7 @@ Expression Expression::eval(Environment & env){
     }
     // handle lambda special-form
     else if(m_head.isLambda()){
-        return handle_lambda(env);
+        return handle_lambda();
     }
     // handle list special-form
     else if(m_head.isList()){
