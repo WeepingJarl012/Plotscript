@@ -32,7 +32,9 @@ Atom::Atom(const Token & token): Atom(){
     }
     else{ // else assume symbol
         // make sure does not start with number
-        if(!std::isdigit(token.asString()[0])){
+        if(token.type() == Token::USERSTRING){
+            setUserString(token.asString());
+        } else if(!std::isdigit(token.asString()[0])){
             setSymbol(token.asString());
         }
     }
@@ -66,6 +68,8 @@ Atom & Atom::operator=(const Atom & x){
         }
         else if(x.m_type == SymbolKind || x.m_type == ListKind || x.m_type == LambdaKind){
             setSymbol(x.stringValue);
+        } else if(x.m_type == UserStringKind){
+            setUserString(x.stringValue);
         }
     }
     return *this;
@@ -93,6 +97,10 @@ bool Atom::isComplex() const noexcept{
 
 bool Atom::isSymbol() const noexcept{
     return m_type == SymbolKind;
+}
+
+bool Atom::isUserString() const noexcept{
+    return m_type == UserStringKind;
 }
 
 bool Atom::isList() const noexcept{
@@ -136,6 +144,19 @@ void Atom::setSymbol(const std::string & value){
     new (&stringValue) std::string(value);
 }
 
+void Atom::setUserString(const std::string & value){
+    
+    // we need to ensure the destructor of the symbol string is called
+    if(m_type == UserStringKind){
+        stringValue.~basic_string();
+    }
+    
+    m_type = UserStringKind;
+    
+    // copy construct in place
+    new (&stringValue) std::string(value);
+}
+
 double Atom::asNumber() const noexcept{
     
     return (m_type == NumberKind) ? complexValue.real() : 0.0;
@@ -150,7 +171,7 @@ std::string Atom::asSymbol() const noexcept{
     
     std::string result;
     
-    if(m_type == SymbolKind || m_type == ListKind || m_type == LambdaKind){
+    if(m_type == SymbolKind || m_type == ListKind || m_type == LambdaKind || m_type == UserStringKind){
         result = stringValue;
     }
     
@@ -182,6 +203,13 @@ bool Atom::operator==(const Atom & right) const noexcept{
             return stringValue == right.stringValue;
         }
             break;
+        case UserStringKind:
+        {
+            if(right.m_type != UserStringKind) return false;
+            
+            return stringValue == right.stringValue;
+        }
+            break;
         default:
             return false;
     }
@@ -203,7 +231,7 @@ std::ostream & operator<<(std::ostream & out, const Atom & a){
     if(a.isComplex()){
         out << a.asComplex();
     }
-    if(a.isSymbol() || a.isLambda()){
+    if(a.isSymbol() || a.isLambda() || a.isUserString()){
         out << a.asSymbol();
     }
     return out;

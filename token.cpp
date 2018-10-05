@@ -8,10 +8,13 @@
 const char OPENCHAR = '(';
 const char CLOSECHAR = ')';
 const char COMMENTCHAR = ';';
+const char STRINGCHAR = '"';
 
 Token::Token(TokenType t): m_type(t){}
 
 Token::Token(const std::string & str): m_type(STRING), value(str) {}
+
+Token::Token(TokenType t, const std::string & str): m_type(t), value(str) {}
 
 Token::TokenType Token::type() const{
     return m_type;
@@ -24,6 +27,10 @@ std::string Token::asString() const{
         case CLOSE:
             return ")";
         case STRING:
+            return value;
+        case STRINGBOUNDS:
+            return "\"";
+        case USERSTRING:
             return value;
     }
     return "";
@@ -41,6 +48,8 @@ void store_ifnot_empty(std::string & token, TokenSequenceType & seq){
 TokenSequenceType tokenize(std::istream & seq){
     TokenSequenceType tokens;
     std::string token;
+    
+    bool stringOpen = false;
     
     while(true){
         char c = seq.get();
@@ -61,7 +70,16 @@ TokenSequenceType tokenize(std::istream & seq){
             store_ifnot_empty(token, tokens);
             tokens.push_back(Token::TokenType::CLOSE);
         }
-        else if(isspace(c)){
+        else if(c == STRINGCHAR){
+            stringOpen = !stringOpen;
+            token.push_back(c);
+            if (!stringOpen){
+                tokens.push_back(Token(Token::USERSTRING, token));
+                token.clear();
+            }
+            // tokens.push_back(Token::TokenType::STRINGBOUNDS);
+        }
+        else if(isspace(c) && !stringOpen){
             store_ifnot_empty(token, tokens);
         }
         else{

@@ -20,7 +20,9 @@ public:
      */
     enum TokenType { OPEN,  //< open tag, aka '('
         CLOSE, //< close tag, aka ')'
-        STRING //< string tag
+        STRING, //< string tag
+        STRINGBOUNDS, //< string bounds character, aka '"'
+        USERSTRING  //< user string tag
     };
     
     /// construct a token of type t (if string default to empty value)
@@ -28,6 +30,9 @@ public:
     
     /// contruct a token of type String with value
     Token(const std::string & str);
+    
+    /// contruct a token of type UserString with value
+    Token(TokenType t, const std::string & str);
     
     /// return the type of the token
     TokenType type() const;

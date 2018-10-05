@@ -351,7 +351,7 @@ Expression Expression::handle_map(Environment & env){
 Expression Expression::eval(Environment & env){
     
     // TODO: Deal with empty lambda
-    if(m_tail.empty() && !m_head.isList() && !m_head.isLambda()){
+    if(m_tail.empty() && !m_head.isList() && !m_head.isLambda() && !m_head.isUserString()){
         return handle_lookup(m_head, env);
     }
     // handle begin special-form
@@ -377,6 +377,9 @@ Expression Expression::eval(Environment & env){
     // handle list special-form
     else if(m_head.isList()){
         return handle_list(env);
+    }
+    else if(m_head.isUserString()){
+        return *this;
     }
     // else attempt to treat as procedure
     else{ 

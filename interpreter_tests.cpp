@@ -1046,6 +1046,40 @@ TEST_CASE( "Test Interpreter result with simple procedures (list)", "[interprete
     }
 }
 
+TEST_CASE( "Test interpreter with user strings (user strings)", "[interpreter]" ) {
+    
+    { // userstring, simple user string
+        std::string program = "(\"foo\")";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        Token tokenValue(Token::USERSTRING, "\"foo\"");
+        expectedResult.setHead(Atom(tokenValue));
+        REQUIRE(result == expectedResult);
+    }
+    
+    { // userstring, simple user string with spaces
+        std::string program = "(\"a string with spaces\")";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        Token tokenValue(Token::USERSTRING, "\"a string with spaces\"");
+        expectedResult.setHead(Atom(tokenValue));
+        REQUIRE(result == expectedResult);
+    }
+    
+    { // userstring, define simple user string
+        std::string program = "(define x (\"foo\"))";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        Token tokenValue(Token::USERSTRING, "\"foo\"");
+        expectedResult.setHead(Atom(tokenValue));
+        REQUIRE(result == expectedResult);
+    }
+    
+}
+
 TEST_CASE( "Test Interpreter special forms: begin and define", "[interpreter]" ) {
     
     {

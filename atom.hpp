@@ -54,6 +54,9 @@ public:
     /// predicate to determine if an Atom is of type Symbol
     bool isSymbol() const noexcept;
     
+    /// predicate to determine if an Atom is of type UserStringKind
+    bool isUserString() const noexcept;
+    
     /// predicate to determine if an Atom is of type List
     bool isList() const noexcept;
     
@@ -75,7 +78,7 @@ public:
 private:
     
     // internal enum of known types
-    enum Type {NoneKind, NumberKind, ComplexKind, ListKind, LambdaKind, SymbolKind};
+    enum Type {NoneKind, NumberKind, ComplexKind, ListKind, LambdaKind, SymbolKind, UserStringKind};
     
     // track the type
     Type m_type;
@@ -95,6 +98,9 @@ private:
     
     // helper to set type and value of Symbol
     void setSymbol(const std::string & value);
+    
+    // helper to set type and value of user string
+    void setUserString(const std::string & value);
 };
 
 /// inequality comparison for Atom
