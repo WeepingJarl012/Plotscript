@@ -86,7 +86,17 @@ void Expression::append(const Expression & a){
 }
 
 void Expression::add_property(const Expression & key, const Expression & value) {
-    properties.emplace(key.head().asSymbol(), value);
+    // Check if key already exists
+    auto result = properties.find(key.head().asSymbol());
+    
+    if (result != properties.end()){
+        properties.erase(key.head().asSymbol());
+        properties.emplace(key.head().asSymbol(), value);
+    } else {
+        properties.emplace(key.head().asSymbol(), value);
+    }
+    
+    
 }
 
 Expression Expression::get_property(const Expression & key){
