@@ -6,7 +6,7 @@
 
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <map>
 
 #include "token.hpp"
 #include "atom.hpp"
@@ -103,7 +103,7 @@ private:
     std::vector<Expression> m_tail;
     
     // the property map
-    std::unordered_map<std::string, Expression> properties;
+    std::map<std::string, Expression> properties;
     
     // convenience typedef
     typedef std::vector<Expression>::iterator IteratorType;
