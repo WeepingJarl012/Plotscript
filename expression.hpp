@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include "token.hpp"
 #include "atom.hpp"
@@ -53,6 +54,12 @@ public:
     /// append Expression to tail of the expression
     void append(const Expression & a);
     
+    /// Add a new property to an expression
+    void add_property(const Expression & key, const Expression & value);
+    
+    /// Gets property value
+    Expression get_property(const Expression & key);
+    
     /// return a pointer to the last expression in the tail, or nullptr
     Expression * tail();
     
@@ -74,6 +81,9 @@ public:
     /// convienience member to determine if head atom is a list
     bool isHeadList() const noexcept;
     
+    /// convienience member to determine if head atom is a string
+    bool isHeadString() const noexcept;
+    
     /// convienience member to determine if head atom is a lambda
     bool isHeadLambda() const noexcept;
     
@@ -91,6 +101,9 @@ private:
     // the tail list is expressed as a vector for access efficiency
     // and cache coherence, at the cost of wasted memory.
     std::vector<Expression> m_tail;
+    
+    // the property map
+    std::unordered_map<std::string, Expression> properties;
     
     // convenience typedef
     typedef std::vector<Expression>::iterator IteratorType;

@@ -590,6 +590,46 @@ Expression range(const std::vector<Expression> & args){
     return result;
 };
 
+Expression setproperty(const std::vector<Expression> & args){
+    
+    Expression result;
+    
+    if(nargs_equal(args,3)){
+        if (!args[0].isHeadString()){
+            throw SemanticError("Error: first argument to set-property not a string");
+        } else {
+            result = args[2];
+            
+            result.add_property(args[0], args[1]);
+        }
+    }
+    else {
+        throw SemanticError("Error: wrong number of arguments in call to set-property");
+    }
+    
+    return result;
+};
+
+Expression getproperty(const std::vector<Expression> & args){
+    
+    Expression result;
+    
+    if(nargs_equal(args,2)){
+        if (!args[0].isHeadString()){
+            throw SemanticError("Error: first argument to set-property not a string");
+        } else {
+            Expression exp = args[1];
+            
+            result = exp.get_property(args[0]);
+        }
+    }
+    else {
+        throw SemanticError("Error: wrong number of arguments in call to get-property");
+    }
+    
+    return result;
+};
+
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
 const std::complex<double> I (0.0, 1.0);
@@ -765,4 +805,10 @@ void Environment::reset(){
     
     // Procedure: range;
     envmap.emplace("range", EnvResult(ProcedureType, range));
+    
+    // Procedure: set-property;
+    envmap.emplace("set-property", EnvResult(ProcedureType, setproperty));
+    
+    // Procedure: get-property;
+    envmap.emplace("get-property", EnvResult(ProcedureType, getproperty));
 }

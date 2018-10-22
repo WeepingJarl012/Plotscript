@@ -1046,6 +1046,19 @@ TEST_CASE( "Test Interpreter result with simple procedures (list)", "[interprete
     }
 }
 
+
+TEST_CASE( "Test Interpreter result with simple procedures (set-property)", "[interpreter]" ) {
+    
+    { // set-property, throw error invalid first argument
+        std::string program = "(set-property (+ 1 2) \"number\" \"three\")";
+        INFO(program);
+        Expression result = runError(program);
+        
+        REQUIRE(result == Expression());
+    }
+    
+}
+
 TEST_CASE( "Test interpreter with user strings (user strings)", "[interpreter]" ) {
     
     { // userstring, simple user string

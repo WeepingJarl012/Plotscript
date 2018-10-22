@@ -20,6 +20,8 @@ Expression::Expression(const Expression & a){
     for(auto e : a.m_tail){
         m_tail.push_back(e);
     }
+    
+    properties = a.properties;
 }
 
 Expression & Expression::operator=(const Expression & a){
@@ -30,7 +32,9 @@ Expression & Expression::operator=(const Expression & a){
         m_tail.clear();
         for(auto e : a.m_tail){
             m_tail.push_back(e);
-        } 
+        }
+        
+        properties = a.properties;
     }
     
     return *this;
@@ -61,6 +65,10 @@ bool Expression::isHeadList() const noexcept{
     return m_head.isList();
 }
 
+bool Expression::isHeadString() const noexcept{
+    return m_head.isUserString();
+}
+
 bool Expression::isHeadLambda() const noexcept{
     return m_head.isLambda();
 }
@@ -75,6 +83,22 @@ void Expression::append(const Atom & a){
 
 void Expression::append(const Expression & a){
     m_tail.emplace_back(a);
+}
+
+void Expression::add_property(const Expression & key, const Expression & value) {
+    properties.emplace(key.head().asSymbol(), value);
+}
+
+Expression Expression::get_property(const Expression & key){
+    
+    auto result = properties.find(key.head().asSymbol());
+    
+    if (result != properties.end()){
+        return result->second;
+    } else {
+        return Expression();
+    }
+    
 }
 
 Expression * Expression::tail(){
@@ -395,6 +419,11 @@ Expression Expression::eval(Environment & env){
 std::ostream & operator<<(std::ostream & out, const Expression & exp){
     
     /// Final output handled
+    
+    if (exp.head().isNone()){
+        out << "NONE";
+        return out;
+    }
     
     if (!exp.isHeadComplex()){
         out << "(";  // Paranthesis added
