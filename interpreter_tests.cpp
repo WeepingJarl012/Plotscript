@@ -1057,6 +1057,36 @@ TEST_CASE( "Test Interpreter result with simple procedures (set-property)", "[in
         REQUIRE(result == Expression());
     }
     
+    { // set-property, throw error wrong number of arguments
+        std::string program = "(set-property (4) (+ 1 2) \"number\" \"three\")";
+        INFO(program);
+        Expression result = runError(program);
+        
+        REQUIRE(result == Expression());
+    }
+    
+    { // set-property, simple set property
+        std::string program = "(set-property \"number\" (3) \"three\")";
+        INFO(program);
+        Expression result = run(program);
+        Expression expectedResult;
+        Token tokenValue(Token::USERSTRING, "\"three\"");
+        expectedResult.setHead(Atom(tokenValue));
+        REQUIRE(result == expectedResult);
+    }
+    
+}
+
+TEST_CASE( "Test Interpreter result with simple procedures (get-property)", "[interpreter]" ) {
+    
+    { // get-property, throw error wrong number of arguments
+        std::string program = "(get-property (4) (+ 1 2) \"number\" \"three\")";
+        INFO(program);
+        Expression result = runError(program);
+        
+        REQUIRE(result == Expression());
+    }
+    
 }
 
 TEST_CASE( "Test interpreter with user strings (user strings)", "[interpreter]" ) {
