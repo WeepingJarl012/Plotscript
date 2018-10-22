@@ -30,6 +30,24 @@ int eval_from_stream(std::istream & stream){
     
     Interpreter interp;
     
+    std::ifstream startup_stream(STARTUP_FILE);
+    
+    if(!startup_stream){
+        error("Could not open startup file for reading.");
+    }
+    
+    if(!interp.parseStream(startup_stream)){
+        error("Invalid Program. Could not parse start up file.");
+    }
+    else{
+        try{
+            Expression exp = interp.evaluate();
+        }
+        catch(const SemanticError & ex){
+            std::cerr << ex.what() << std::endl;
+        }
+    }
+    
     if(!interp.parseStream(stream)){
         error("Invalid Program. Could not parse.");
         return EXIT_FAILURE;
@@ -71,13 +89,13 @@ int eval_from_command(std::string argexp){
 void repl(){
     Interpreter interp;
     
-    std::ifstream stream(STARTUP_FILE);
+    std::ifstream startup_stream(STARTUP_FILE);
     
-    if(!stream){
+    if(!startup_stream){
         error("Could not open startup file for reading.");
     }
     
-    if(!interp.parseStream(stream)){
+    if(!interp.parseStream(startup_stream)){
         error("Invalid Program. Could not parse start up file.");
     }
     else{
