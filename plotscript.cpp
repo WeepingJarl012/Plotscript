@@ -5,6 +5,7 @@
 
 #include "interpreter.hpp"
 #include "semantic_error.hpp"
+#include "startup_config.hpp"
 
 void prompt(){
     std::cout << "\nplotscript> ";
@@ -69,6 +70,24 @@ int eval_from_command(std::string argexp){
 // A REPL is a repeated read-eval-print loop
 void repl(){
     Interpreter interp;
+    
+    std::ifstream stream(STARTUP_FILE);
+    
+    if(!stream){
+        error("Could not open startup file for reading.");
+    }
+    
+    if(!interp.parseStream(stream)){
+        error("Invalid Program. Could not parse start up file.");
+    }
+    else{
+        try{
+            Expression exp = interp.evaluate();
+        }
+        catch(const SemanticError & ex){
+            std::cerr << ex.what() << std::endl;
+        }
+    }
     
     while(!std::cin.eof()){
         
