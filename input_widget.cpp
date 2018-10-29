@@ -80,3 +80,15 @@ void InputWidget::evaluateText(){
     std::cout << exp << std::endl;
     
 }
+
+Expression InputWidget::getResult(){
+    return exp;
+}
+
+bool InputWidget::checkParseError(){
+    return parseError;
+}
+
+bool InputWidget::checkExceptionError(){
+    return exceptionError;
+}

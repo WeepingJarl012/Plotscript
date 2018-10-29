@@ -18,6 +18,11 @@ public:
     
     void keyPressEvent(QKeyEvent *ev);
     
+    // Helper methods to get expression and errors
+    Expression getResult();
+    bool checkParseError();
+    bool checkExceptionError();
+    
 private:
     
     Expression exp;
