@@ -20,7 +20,9 @@ private:
     QGraphicsScene * scene;
     QGraphicsView * view;
     
-    private slots:
+private slots:
+    
+    void updateOutput();
     
     
 };

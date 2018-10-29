@@ -8,6 +8,11 @@ class InputWidget: public QPlainTextEdit {
 public:
     
     InputWidget(QWidget * parent = nullptr);
+    
+    void keyPressEvent(QKeyEvent *ev);
+    
+private:
+    
 
 };
 
