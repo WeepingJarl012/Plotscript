@@ -1,16 +1,5 @@
-#ifndef INPUT_WIDGET_H
-#define INPUT_WIDGET_H
+#include "input_widget.hpp"
 
-#include <QPlainTextEdit>
-
-class InputWidget: public QPlainTextEdit
-{
-    Q_OBJECT
-public:
+InputWidget::InputWidget(QWidget * parent){
     
-    InputWidget(QWidget * parent = nullptr);
-    
-    void keyPressEvent(QKeyEvent *ev);
-};
-
-#endif
+}
