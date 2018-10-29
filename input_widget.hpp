@@ -21,8 +21,14 @@ public:
 private:
     
     Expression exp;
+    Interpreter interp;
+    
+    // Keep track if there is a parse error or semantic error
+    bool parseError;
+    bool exceptionError;
     
     void evaluateText();
+    void evaluateStartupFile();
 
 };
 

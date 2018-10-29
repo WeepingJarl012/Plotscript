@@ -3,7 +3,10 @@
 #include <QDebug>
 
 InputWidget::InputWidget(QWidget * parent){
+    evaluateStartupFile();
     
+    parseError = false;
+    exceptionError = false;
 }
 
 
@@ -12,7 +15,6 @@ void InputWidget::keyPressEvent(QKeyEvent * ev){
     if((ev->type()==QEvent::KeyPress) && (((((QKeyEvent*)ev)->key() == Qt::Key_Return)) || ((QKeyEvent*)ev)->key() == Qt::Key_Enter)){
         
         if(ev->modifiers() == Qt::ShiftModifier){
-            qDebug() << "Enter Key pressed with shift";
             evaluateText();
             emit textChanged();
         } else {
@@ -25,46 +27,56 @@ void InputWidget::keyPressEvent(QKeyEvent * ev){
     }
 }
 
-void InputWidget::evaluateText(){
-    Interpreter interp;
+void InputWidget::evaluateStartupFile(){
     
-    auto stream = this->toPlainText();
-    
-    qDebug() << stream;
-    
-    /**
     std::ifstream startup_stream(STARTUP_FILE);
     
     if(!startup_stream){
-        // error("Could not open startup file for reading.");
+        parseError = true;
+        exp = Expression(Atom("Could not open startup file for reading."));
     }
     
     if(!interp.parseStream(startup_stream)){
-        // error("Invalid Program. Could not parse start up file.");
+        parseError = true;
+        exp = Expression(Atom("Invalid Program. Could not parse start up file."));
     }
     else{
         try{
             exp = interp.evaluate();
+            parseError = false;
+            exceptionError = false;
         }
         catch(const SemanticError & ex){
-            std::cerr << ex.what() << std::endl;
+            exceptionError = true;
+            exp = Expression(Atom(ex.what()));
         }
     }
     
-    if(!interp.parseStream(stream)){
-        // error("Invalid Program. Could not parse.");
-        // return EXIT_FAILURE;
+}
+
+void InputWidget::evaluateText(){
+    
+    auto qstream = this->toPlainText();
+    auto line = qstream.toStdString();
+    
+    std::istringstream expression(line);
+    
+    if(!interp.parseStream(expression)){
+        parseError = true;
+        exp = Expression(Atom("Invalid Program. Could not parse."));
     }
     else{
         try{
             exp = interp.evaluate();
-            std::cout << exp << std::endl;
+            parseError = false;
+            exceptionError = false;
         }
         catch(const SemanticError & ex){
-            std::cerr << ex.what() << std::endl;
-            // return EXIT_FAILURE;
+            exceptionError = true;
+            exp = Expression(Atom(ex.what()));
         }
     }
-    **/
+    
+    std::cout << exp << std::endl;
     
 }
