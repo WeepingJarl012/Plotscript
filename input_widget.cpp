@@ -16,7 +16,7 @@ void InputWidget::keyPressEvent(QKeyEvent * ev){
         
         if(ev->modifiers() == Qt::ShiftModifier){
             evaluateText();
-            emit textChanged();
+            emit textEvaluated();
         } else {
             // Still types when not evaluate
             QPlainTextEdit::keyPressEvent(ev);

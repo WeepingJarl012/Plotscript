@@ -7,6 +7,8 @@ NotebookApp::NotebookApp(QWidget * parent){
     input->setObjectName("input");
     output->setObjectName("output");
     
+    QObject::connect(input, SIGNAL(textEvaluated()), output, SLOT(updateOutput()));
+    
     auto layout = new QGridLayout();
     layout->addWidget(input, 0, 0);
     layout->addWidget(output, 1, 0);

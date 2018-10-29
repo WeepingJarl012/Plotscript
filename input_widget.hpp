@@ -34,6 +34,9 @@ private:
     
     void evaluateText();
     void evaluateStartupFile();
+    
+signals:
+    void textEvaluated();
 
 };
 
