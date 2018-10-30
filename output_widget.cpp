@@ -14,16 +14,21 @@ OutputWidget::OutputWidget(QWidget * parent){
     auto layout = new QGridLayout;
     layout->addWidget(view, 0, 0);
     setLayout(layout);
+    
+    outputList = false;
 }
 
 void OutputWidget::updateOutput(Expression result){
-    scene->clear();
+    
+    if (!outputList){
+        scene->clear();
+    }
     
     if (result.isHeadPoint()){
         // Create Point
         double size = result.get_property(Expression(Atom("\"size\""))).head().asNumber();
-        double xLoc = result.tail()[-1].head().asNumber();
-        double yLoc = result.tail()[0].head().asNumber();
+        double xLoc = result.tail()[-1].head().asNumber() - (size / 2);
+        double yLoc = result.tail()[0].head().asNumber() - (size / 2);
         
         if (size >= 0){
             scene->addEllipse(xLoc, yLoc, size, size, QPen(), QBrush(Qt::black, Qt::SolidPattern));
@@ -104,8 +109,13 @@ void OutputWidget::updateOutput(Expression result){
         
     } else if (result.isHeadLambda()) {
         // Do nothing
+    } else if (result.isHeadList()) {
+        outputList = true;
+        for(auto e = result.tailConstBegin(); e != result.tailConstEnd(); ++e){
+            updateOutput(*e);
+        }
+        outputList = false;
     }
-    
 }
 
 void OutputWidget::updateOutputError(Expression result){

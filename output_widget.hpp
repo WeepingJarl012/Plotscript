@@ -23,6 +23,7 @@ private:
     QGraphicsScene * scene;
     QGraphicsView * view;
     QPen * myPen;
+    bool outputList;
     
 public slots:
     
