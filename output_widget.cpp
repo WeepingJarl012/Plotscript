@@ -27,7 +27,10 @@ void OutputWidget::updateOutput(Expression result){
         
         QString qResultString = QString::fromStdString(resultString.str());
         scene->addText(qResultString);
+    } else if (result.isHeadLambda()) {
+        // Do nothing
     }
+    
 }
 
 void OutputWidget::updateOutputError(Expression result){
