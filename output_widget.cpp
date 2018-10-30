@@ -88,6 +88,11 @@ void OutputWidget::updateOutput(Expression result){
         // Create text
         std::stringstream resultString;
         
+        Expression point = result.get_property(Expression(Atom("\"position\"")));
+        
+        double xLoc = point.tail()[-1].head().asNumber();
+        double yLoc = point.tail()[0].head().asNumber();
+        
         // Full string with quotations
         std::string fullString = result.head().asSymbol();
         
@@ -95,7 +100,9 @@ void OutputWidget::updateOutput(Expression result){
         resultString << fullString.substr(1, fullString.length()-2);
         
         QString qResultString = QString::fromStdString(resultString.str());
-        scene->addText(qResultString);
+        QGraphicsTextItem *text = scene->addText(qResultString);
+        text->setPos(xLoc, yLoc);
+        
         
     } else if (result.isHeadComplex() || result.isHeadNone() || result.isHeadNumber() || result.isHeadString() || result.isHeadSymbol()) {
         std::stringstream resultString;

@@ -6,6 +6,7 @@
 #include <QWidget>
 #include <QLayout>
 #include <QDebug>
+#include <QGraphicsTextItem>
 
 #include "interpreter.hpp"
 
