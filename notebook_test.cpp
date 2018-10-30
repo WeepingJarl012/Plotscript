@@ -64,6 +64,30 @@ void NotebookTest::testEvaluateText(){
     QCOMPARE(input->getResult(), Expression(Atom(-1)));
     QVERIFY2(!input->checkParseError(), "Parse error when there shouldn't be");
     QVERIFY2(!input->checkExceptionError(), "Exception error when there shouldn't be");
+    
+    input->clear();
+    
+    // Input text with parse error
+    input->insertPlainText("(cos pi");
+    QTest::keyClick(input, Qt::Key_Return, Qt::ShiftModifier);
+    
+    QCOMPARE(input->getResult(), Expression(Atom("Invalid Program. Could not parse.")));
+    QVERIFY2(input->checkParseError(), "No parse error when there should be");
+    QVERIFY2(!input->checkExceptionError(), "Exception error when there shouldn't be");
+    
+    input->clear();
+    
+    // Input text with exception error
+    input->insertPlainText("(first 1)");
+    QTest::keyClick(input, Qt::Key_Return, Qt::ShiftModifier);
+    
+    auto real = input->getResult();
+    
+    QCOMPARE(input->getResult(), Expression(Atom("Error: argument to first is not a list")));
+    QVERIFY2(input->checkParseError(), "Not parse error when there should be");
+    QVERIFY2(input->checkExceptionError(), "No exception error when there should be");
+    
+    input->clear();
 }
 
 
