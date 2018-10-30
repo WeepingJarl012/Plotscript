@@ -10,6 +10,7 @@ NotebookApp::NotebookApp(QWidget * parent){
     // QObject::connect(input, &InputWidget::textEvaluated, output, &OutputWidget::updateOutput);
     QObject::connect(input, SIGNAL(textEvaluated()), this, SLOT(changeOutput()));
     QObject::connect(this, &NotebookApp::outputChanged, output, &OutputWidget::updateOutput);
+    QObject::connect(this, &NotebookApp::outputChangedError, output, &OutputWidget::updateOutputError);
     
     auto layout = new QGridLayout();
     layout->addWidget(input, 0, 0);
@@ -19,5 +20,9 @@ NotebookApp::NotebookApp(QWidget * parent){
 }
 
 void NotebookApp::changeOutput(){
-    outputChanged(input->getResult());
+    if (input->checkParseError() || input->checkExceptionError()){
+        outputChangedError(input->getResult());
+    } else {
+        outputChanged(input->getResult());
+    }
 }

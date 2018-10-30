@@ -26,6 +26,7 @@ private:
 public slots:
     
     void updateOutput(Expression result);
+    void updateOutputError(Expression result);
     
     
 };

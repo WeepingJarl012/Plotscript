@@ -17,9 +17,27 @@ void OutputWidget::updateOutput(Expression result){
     scene->clear();
     
     if (result.isHeadComplex() || result.isHeadNone() || result.isHeadNumber() || result.isHeadString() || result.isHeadSymbol()) {
-        std::stringstream test;
-        test << "(" << result.head() << ")";
-        QString qtest = QString::fromStdString(test.str());
-        scene->addText(qtest);
+        std::stringstream resultString;
+        
+        if (!result.isHeadComplex()){
+            resultString << "(" << result.head() << ")";
+        } else {
+            resultString << result.head();
+        }
+        
+        QString qResultString = QString::fromStdString(resultString.str());
+        scene->addText(qResultString);
     }
+}
+
+void OutputWidget::updateOutputError(Expression result){
+    scene->clear();
+    
+    std::stringstream resultString;
+    
+    resultString << result.head();
+    
+    QString qResultString = QString::fromStdString(resultString.str());
+    scene->addText(qResultString);
+    
 }

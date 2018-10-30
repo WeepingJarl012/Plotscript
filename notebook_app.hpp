@@ -21,6 +21,7 @@ private slots:
     
 signals:
     void outputChanged(Expression result);
+    void outputChangedError(Expression result);
     
 public:
     
