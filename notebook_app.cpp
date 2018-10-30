@@ -2,6 +2,10 @@
 #include <QLayout>
 
 NotebookApp::NotebookApp(QWidget * parent){
+    if(parent!=nullptr){
+        // Use variable, useless
+    }
+    
     input = new InputWidget();
     output = new OutputWidget();
     input->setObjectName("input");

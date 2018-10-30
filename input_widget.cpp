@@ -3,6 +3,10 @@
 #include <QDebug>
 
 InputWidget::InputWidget(QWidget * parent){
+    if(parent!=nullptr){
+        // Use variable, useless
+    }
+    
     evaluateStartupFile();
     
     parseError = false;

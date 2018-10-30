@@ -3,6 +3,10 @@
 #include <QDebug>
 
 OutputWidget::OutputWidget(QWidget * parent){
+    if(parent!=nullptr){
+        // Use variable, useless
+    }
+    
     scene = new QGraphicsScene;
     view = new QGraphicsView(scene);
     // view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
