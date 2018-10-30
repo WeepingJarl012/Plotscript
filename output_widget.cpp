@@ -31,8 +31,8 @@ void OutputWidget::updateOutput(Expression result){
     if (result.isHeadPoint()){
         // Create Point
         double size = result.get_property(Expression(Atom("\"size\""))).head().asNumber();
-        double xLoc = result.tail()[-1].head().asNumber();// - (size / 2);
-        double yLoc = result.tail()[0].head().asNumber();// - (size / 2);
+        double xLoc = result.tail()[-1].head().asNumber() - (size / 2);
+        double yLoc = result.tail()[0].head().asNumber() - (size / 2);
         
         if (size >= 0){
             scene->addEllipse(xLoc, yLoc, size, size, QPen(), QBrush(Qt::black, Qt::SolidPattern));
