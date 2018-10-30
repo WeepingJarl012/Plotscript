@@ -15,8 +15,11 @@ OutputWidget::OutputWidget(QWidget * parent){
 
 void OutputWidget::updateOutput(Expression result){
     scene->clear();
-    std::stringstream test;
-    test << "(" << result.head() << ")";
-    QString qtest = QString::fromStdString(test.str());
-    scene->addSimpleText(qtest);
+    
+    if (result.isHeadComplex() || result.isHeadNone() || result.isHeadNumber() || result.isHeadString() || result.isHeadSymbol()) {
+        std::stringstream test;
+        test << "(" << result.head() << ")";
+        QString qtest = QString::fromStdString(test.str());
+        scene->addText(qtest);
+    }
 }

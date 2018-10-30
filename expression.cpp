@@ -73,6 +73,10 @@ bool Expression::isHeadLambda() const noexcept{
     return m_head.isLambda();
 }
 
+bool Expression::isHeadNone() const noexcept{
+    return m_head.isNone();
+}
+
 void Expression::setHead(const Atom & a){
     m_head = a;
 }
