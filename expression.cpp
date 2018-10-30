@@ -77,6 +77,42 @@ bool Expression::isHeadNone() const noexcept{
     return m_head.isNone();
 }
 
+bool Expression::isHeadPoint() const noexcept{
+    auto result = properties.find("\"object-name\"");
+    
+    if (result == properties.end()){
+        return false;
+    } else if (result->second.head().asSymbol() == "\"point\""){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Expression::isHeadLine() const noexcept{
+    auto result = properties.find("\"object-name\"");
+    
+    if (result == properties.end()){
+        return false;
+    } else if (result->second.head().asSymbol() == "\"line\""){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Expression::isHeadText() const noexcept{
+    auto result = properties.find("\"object-name\"");
+    
+    if (result == properties.end()){
+        return false;
+    } else if (result->second.head().asSymbol() == "\"text\""){
+        return true;
+    } else {
+        return false;
+    }
+}
+
 void Expression::setHead(const Atom & a){
     m_head = a;
 }

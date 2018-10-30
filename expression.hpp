@@ -87,8 +87,17 @@ public:
     /// convienience member to determine if head atom is a lambda
     bool isHeadLambda() const noexcept;
     
-    /// convienience member to determine if head atom is a lambda
+    /// convienience member to determine if head atom is a NONE
     bool isHeadNone() const noexcept;
+    
+    /// convienience member to determine if head atom is a point
+    bool isHeadPoint() const noexcept;
+    
+    /// convienience member to determine if head atom is a line
+    bool isHeadLine() const noexcept;
+    
+    /// convienience member to determine if head atom is a text
+    bool isHeadText() const noexcept;
     
     /// Evaluate expression using a post-order traversal (recursive)
     Expression eval(Environment & env);

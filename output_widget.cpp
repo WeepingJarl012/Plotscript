@@ -16,7 +16,28 @@ OutputWidget::OutputWidget(QWidget * parent){
 void OutputWidget::updateOutput(Expression result){
     scene->clear();
     
-    if (result.isHeadComplex() || result.isHeadNone() || result.isHeadNumber() || result.isHeadString() || result.isHeadSymbol()) {
+    if (result.isHeadPoint()){
+        // Create Point
+        double size = result.get_property(Expression(Atom("\"size\""))).head().asNumber();
+        double xLoc = result.tail()[0].head().asNumber();
+        double yLoc = result.tail()[1].head().asNumber();
+        
+        if (size >= 0){
+            scene->addEllipse(xLoc, yLoc, size, size, QPen(), QBrush(Qt::black, Qt::SolidPattern));
+        } else {
+            std::stringstream resultString;
+            
+            resultString << "Error in make-point: Size can't be negative";
+            
+            QString qResultString = QString::fromStdString(resultString.str());
+            scene->addText(qResultString);
+        }
+        
+    } else if (result.isHeadLine()){
+        // Create line
+    } else if (result.isHeadText()){
+        // Create text
+    } else if (result.isHeadComplex() || result.isHeadNone() || result.isHeadNumber() || result.isHeadString() || result.isHeadSymbol()) {
         std::stringstream resultString;
         
         if (!result.isHeadComplex() && !result.isHeadNone()){
@@ -29,6 +50,7 @@ void OutputWidget::updateOutput(Expression result){
         
         QString qResultString = QString::fromStdString(resultString.str());
         scene->addText(qResultString);
+        
     } else if (result.isHeadLambda()) {
         // Do nothing
     }
