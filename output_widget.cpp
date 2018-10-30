@@ -19,10 +19,12 @@ void OutputWidget::updateOutput(Expression result){
     if (result.isHeadComplex() || result.isHeadNone() || result.isHeadNumber() || result.isHeadString() || result.isHeadSymbol()) {
         std::stringstream resultString;
         
-        if (!result.isHeadComplex()){
+        if (!result.isHeadComplex() && !result.isHeadNone()){
             resultString << "(" << result.head() << ")";
-        } else {
+        } else if (result.isHeadComplex()){
             resultString << result.head();
+        } else if (result.isHeadNone()){
+            resultString << "NONE";
         }
         
         QString qResultString = QString::fromStdString(resultString.str());
