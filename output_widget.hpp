@@ -5,6 +5,9 @@
 #include <QGraphicsScene>
 #include <QWidget>
 #include <QLayout>
+#include <QDebug>
+
+#include "interpreter.hpp"
 
 class QGraphicsScene;
 class QGraphicsView;
@@ -20,9 +23,9 @@ private:
     QGraphicsScene * scene;
     QGraphicsView * view;
     
-private slots:
+public slots:
     
-    void updateOutput();
+    void updateOutput(Expression result);
     
     
 };

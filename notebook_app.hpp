@@ -16,8 +16,11 @@ private:
     OutputWidget * output;
     
     
-    private slots:
+private slots:
+    void changeOutput();
     
+signals:
+    void outputChanged(Expression result);
     
 public:
     

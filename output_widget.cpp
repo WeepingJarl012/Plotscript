@@ -13,6 +13,10 @@ OutputWidget::OutputWidget(QWidget * parent){
     setLayout(layout);
 }
 
-void OutputWidget::updateOutput(){
-    qDebug() << "update output";
+void OutputWidget::updateOutput(Expression result){
+    scene->clear();
+    std::stringstream test;
+    test << "(" << result.head() << ")";
+    QString qtest = QString::fromStdString(test.str());
+    scene->addSimpleText(qtest);
 }

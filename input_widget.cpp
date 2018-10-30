@@ -77,8 +77,8 @@ void InputWidget::evaluateText(){
         }
     }
     
-    std::cout << exp << std::endl;
-    
+    // std::cout << exp << std::endl;
+
 }
 
 Expression InputWidget::getResult(){
