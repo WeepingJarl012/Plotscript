@@ -74,8 +74,20 @@ void OutputWidget::updateOutput(Expression result){
             QString qResultString = QString::fromStdString(resultString.str());
             scene->addText(qResultString);
         }
+        
     } else if (result.isHeadText()){
         // Create text
+        std::stringstream resultString;
+        
+        // Full string with quotations
+        std::string fullString = result.head().asSymbol();
+        
+        // Remove quotations from string
+        resultString << fullString.substr(1, fullString.length()-2);
+        
+        QString qResultString = QString::fromStdString(resultString.str());
+        scene->addText(qResultString);
+        
     } else if (result.isHeadComplex() || result.isHeadNone() || result.isHeadNumber() || result.isHeadString() || result.isHeadSymbol()) {
         std::stringstream resultString;
         
