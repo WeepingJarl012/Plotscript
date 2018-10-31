@@ -49,7 +49,7 @@ void OutputWidget::updateOutput(Expression result){
         // Create line
         bool error = false;
         
-        double thickness = result.get_property(Expression(Atom("\"thickness\""))).head().asNumber();
+        int thickness = result.get_property(Expression(Atom("\"thickness\""))).head().asNumber();
         double xLoc1;
         double yLoc1;
         double xLoc2;
