@@ -67,7 +67,7 @@ void InputWidget::evaluateText(){
     
     if(!interp.parseStream(expression)){
         parseError = true;
-        exp = Expression(Atom("Invalid Program. Could not parse."));
+        exp = Expression(Atom("Error: Invalid Expression. Could not parse."));
     }
     else{
         try{

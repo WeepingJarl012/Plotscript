@@ -71,7 +71,7 @@ void NotebookTest::testEvaluateText(){
     input->insertPlainText("(cos pi");
     QTest::keyClick(input, Qt::Key_Return, Qt::ShiftModifier);
     
-    QCOMPARE(input->getResult(), Expression(Atom("Invalid Program. Could not parse.")));
+    QCOMPARE(input->getResult(), Expression(Atom("Error: Invalid Expression. Could not parse.")));
     QVERIFY2(input->checkParseError(), "No parse error when there should be");
     QVERIFY2(!input->checkExceptionError(), "Exception error when there shouldn't be");
     
