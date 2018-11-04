@@ -148,6 +148,8 @@ void OutputWidget::updateOutput(Expression result){
         }
         outputList = false;
     }
+    
+    view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 }
 
 void OutputWidget::updateOutputError(Expression result){
