@@ -92,6 +92,22 @@ void OutputWidget::updateOutput(Expression result){
         
         double xLoc = point.tail()[-1].head().asNumber();
         double yLoc = point.tail()[0].head().asNumber();
+        int textSize = 1;
+        double textRot = 0;
+        
+        Expression textScale = result.get_property(Expression(Atom("\"text-scale\"")));
+        Expression textRotation = result.get_property(Expression(Atom("\"text-rotation\"")));
+        
+        if (textScale.isHeadNumber() && textScale.head().asNumber() > 0) {
+            textSize = textScale.head().asNumber();
+        }
+        
+        if (textRotation.isHeadNumber() && textRotation.head().asNumber() > 0) {
+            textRot = textRotation.head().asNumber();
+        }
+        
+        // Setup font
+        QFont myTextFont("Courier", textSize);
         
         // Full string with quotations
         std::string fullString = result.head().asSymbol();
@@ -101,7 +117,12 @@ void OutputWidget::updateOutput(Expression result){
         
         QString qResultString = QString::fromStdString(resultString.str());
         QGraphicsTextItem *text = scene->addText(qResultString);
-        text->setPos(xLoc, yLoc);
+        // Set rotation in radians
+        text->setRotation(textRot * (180/std::atan2(0,-1)));
+        text->setFont(myTextFont);
+        double newxLoc = xLoc - (text->boundingRect().width()/2);
+        double newyLoc = yLoc - (text->boundingRect().height()/2);
+        text->setPos(newxLoc, newyLoc);
         
         
     } else if (result.isHeadComplex() || result.isHeadNone() || result.isHeadNumber() || result.isHeadString() || result.isHeadSymbol()) {
