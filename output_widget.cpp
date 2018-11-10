@@ -92,10 +92,10 @@ void OutputWidget::createPlot(Expression result){
     const double center = 0;
     
     // Add the plot rectangle
-    double botRightX = P + (N / 2);
-    double botRightY = P + (N / 2);
-    double topLeftX = P - (N / 2);
-    double topLeftY = P - (N / 2);
+    double botRightX = center + (N / 2);
+    double botRightY = center + (N / 2);
+    double topLeftX = center - (N / 2) - 1;
+    double topLeftY = center - (N / 2) - 1;
     QRect dataBox = QRect(QPoint(botRightX, botRightY), QPoint(topLeftX, topLeftY));
     myPen->setWidth(0);
     scene->addRect(dataBox, *myPen);
@@ -204,6 +204,71 @@ void OutputWidget::createPlot(Expression result){
     alLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
     outputText(alLabel);
     
+    // Add grid
+    double xSpacing = (maxXVal - minXVal) / N;
+    double ySpacing = (maxYVal - minYVal) / N;
+    // Corners of the plot
+    double botLX = topLeftX;
+    double botLY = botRightY;
+    double botRX = botRightX;
+    double topLY = topLeftY;
+    // Finds 0 for x values
+    double tempXZero = minXVal;
+    
+    // Add x line for origin grid
+    if (0 > minXVal && 0 < maxXVal){
+        double zeroX = botLX + ((0 - minXVal) * N / (maxXVal - minXVal)) + 1;
+        
+        Expression line;
+        line.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"line\"")));
+        line.add_property(Expression(Atom("\"thickness\"")), Expression(Atom(0)));
+        line.setHead(Atom("list"));
+        
+        Expression point1;
+        Expression point2;
+        point1.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+        point2.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+        point1.setHead(Atom("list"));
+        point1.append(Atom(zeroX));
+        point1.append(Atom(botLY));
+        
+        point2.setHead(Atom("list"));
+        point2.append(Atom(zeroX));
+        point2.append(Atom(topLY + 1));
+        
+        line.append(point1);
+        line.append(point2);
+        
+        outputLine(line);
+    }
+    
+    // Add y line for origin grid
+    if (0 > minYVal && 0 < maxYVal){
+        double zeroY = botLY - ((0 - minYVal) * N / (maxYVal - minYVal));
+        
+        Expression line;
+        line.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"line\"")));
+        line.add_property(Expression(Atom("\"thickness\"")), Expression(Atom(0)));
+        line.setHead(Atom("list"));
+        
+        Expression point1;
+        Expression point2;
+        point1.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+        point2.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+        point1.setHead(Atom("list"));
+        point1.append(Atom(botLX + 1));
+        point1.append(Atom(zeroY));
+        
+        point2.setHead(Atom("list"));
+        point2.append(Atom(botRX));
+        point2.append(Atom(zeroY));
+        
+        line.append(point1);
+        line.append(point2);
+        
+        outputLine(line);
+    }
+    
     // Add points
     for (Expression::ConstIteratorType i = result.tailConstBegin(); i != result.tailConstEnd(); i++){
         Expression point = *i;
@@ -212,8 +277,8 @@ void OutputWidget::createPlot(Expression result){
         newPoint.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
         
         newPoint.setHead(point.head());
-        newPoint.append(center - (point.tail()[-1].head().asNumber() * N / 2));
-        newPoint.append(center + (point.tail()[0].head().asNumber() * N / 2));
+        newPoint.append(center + (N / 2 * point.tail()[-1].head().asNumber()));
+        newPoint.append(center - (N / 2 * point.tail()[0].head().asNumber()));
         
         outputPoint(newPoint);
         
