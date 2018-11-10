@@ -654,8 +654,17 @@ Expression discretePlot(const std::vector<Expression> & args){
                 
             }
             
+            
+            // Add all data as points
+            for (Expression::ConstIteratorType i = args[0].tailConstBegin(); i != args[0].tailConstEnd(); i++){
+                Expression point = *i;
+                point.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+                result.append(point);
+                
+            }
+            
             // Add list of data to tail of result
-            result.append(args[0]);
+            // result.append(args[0]);
         }
     }
     else {

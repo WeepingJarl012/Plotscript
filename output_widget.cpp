@@ -89,6 +89,7 @@ void OutputWidget::createPlot(Expression result){
     const double C = 2;
     const double D = 2;
     const double P = 0.5;
+    const double center = 0;
     
     // Add the plot rectangle
     double botRightX = P + (N / 2);
@@ -102,7 +103,7 @@ void OutputWidget::createPlot(Expression result){
     // Add graph title
     Expression titleLoc;
     titleLoc.setHead(Atom("list"));
-    titleLoc.append(P);
+    titleLoc.append(center);
     titleLoc.append(Atom(topLeftY - A));
     title.add_property(Expression(Atom("\"position\"")), titleLoc);
     title.add_property(Expression(Atom("\"text-scale\"")), textScale);
@@ -111,7 +112,7 @@ void OutputWidget::createPlot(Expression result){
     // Add graph x-axis label
     Expression absLoc;
     absLoc.setHead(Atom("list"));
-    absLoc.append(P);
+    absLoc.append(center);
     absLoc.append(Atom(botRightY + A));
     absLabel.add_property(Expression(Atom("\"position\"")), absLoc);
     absLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
@@ -121,12 +122,102 @@ void OutputWidget::createPlot(Expression result){
     Expression ordLoc;
     ordLoc.setHead(Atom("list"));
     ordLoc.append(Atom(topLeftX - B));
-    ordLoc.append(P);
+    ordLoc.append(center);
     ordLabel.add_property(Expression(Atom("\"position\"")), ordLoc);
     ordLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
     // Rotate label by 90 degrees in radians
     ordLabel.add_property(Expression(Atom("\"text-rotation\"")), Expression(Atom(std::atan2(0, -1)/-2)));
     outputText(ordLabel);
+    
+    // Get min and max for x and y values
+    double maxXVal = -__DBL_MAX__;
+    double maxYVal = -__DBL_MAX__;
+    double minXVal = __DBL_MAX__;
+    double minYVal = __DBL_MAX__;
+    for (Expression::ConstIteratorType i = result.tailConstBegin(); i != result.tailConstEnd(); i++){
+        Expression point = *i;
+        
+        if (point.tail()[-1].head().asNumber() > maxXVal){
+            maxXVal = point.tail()[-1].head().asNumber();
+        }
+        if (point.tail()[-1].head().asNumber() < minXVal){
+            minXVal = point.tail()[-1].head().asNumber();
+        }
+        
+        if (point.tail()[0].head().asNumber() > maxYVal){
+            maxYVal = point.tail()[0].head().asNumber();
+        }
+        if (point.tail()[0].head().asNumber() < minYVal){
+            minYVal = point.tail()[0].head().asNumber();
+        }
+    }
+    
+    // Add graph ou label
+    Expression ouLabel;
+    std::stringstream resultOU;
+    resultOU << "\"" << std::setprecision(2) << maxYVal << "\"";
+    ouLabel.setHead(Atom(resultOU.str()));
+    Expression ouLoc;
+    ouLoc.setHead(Atom("list"));
+    ouLoc.append(Atom(topLeftX - D));
+    ouLoc.append(topLeftY);
+    ouLabel.add_property(Expression(Atom("\"position\"")), ouLoc);
+    ouLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    outputText(ouLabel);
+    
+    // Add graph ol label
+    Expression olLabel;
+    std::stringstream resultOL;
+    resultOL << "\"" << std::setprecision(2) << minYVal << "\"";
+    olLabel.setHead(Atom(resultOL.str()));
+    Expression olLoc;
+    olLoc.setHead(Atom("list"));
+    olLoc.append(Atom(topLeftX - D));
+    olLoc.append(botRightY);
+    olLabel.add_property(Expression(Atom("\"position\"")), olLoc);
+    olLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    outputText(olLabel);
+    
+    // Add graph au label
+    Expression auLabel;
+    std::stringstream resultAU;
+    resultAU << "\"" << std::setprecision(2) << maxXVal << "\"";
+    auLabel.setHead(Atom(resultAU.str()));
+    Expression auLoc;
+    auLoc.setHead(Atom("list"));
+    auLoc.append(botRightX);
+    auLoc.append(Atom(botRightY + C));
+    auLabel.add_property(Expression(Atom("\"position\"")), auLoc);
+    auLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    outputText(auLabel);
+    
+    // Add graph al label
+    Expression alLabel;
+    std::stringstream resultAL;
+    resultAL << "\"" << std::setprecision(2) << minXVal << "\"";
+    alLabel.setHead(Atom(resultAL.str()));
+    Expression alLoc;
+    alLoc.setHead(Atom("list"));
+    alLoc.append(topLeftX);
+    alLoc.append(Atom(botRightY + C));
+    alLabel.add_property(Expression(Atom("\"position\"")), alLoc);
+    alLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    outputText(alLabel);
+    
+    // Add points
+    for (Expression::ConstIteratorType i = result.tailConstBegin(); i != result.tailConstEnd(); i++){
+        Expression point = *i;
+        Expression newPoint;
+        newPoint.add_property(Expression(Atom("\"size\"")), Expression(Atom(P)));
+        newPoint.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+        
+        newPoint.setHead(point.head());
+        newPoint.append(center - (point.tail()[-1].head().asNumber() * N / 2));
+        newPoint.append(center + (point.tail()[0].head().asNumber() * N / 2));
+        
+        outputPoint(newPoint);
+        
+    }
     
 }
 
@@ -258,3 +349,5 @@ void OutputWidget::outputPoint(Expression result){
     }
     
 }
+
+

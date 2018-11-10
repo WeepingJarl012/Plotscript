@@ -7,7 +7,7 @@
 #include <QLayout>
 #include <QDebug>
 #include <QGraphicsTextItem>
-
+#include <iomanip>
 #include "interpreter.hpp"
 
 class QGraphicsScene;
