@@ -112,6 +112,8 @@ void NotebookTest::testDiscretePlotLayout() {
     // first check total number of items
     // 8 lines + 2 points + 7 text = 17
     auto items = scene->items();
+    
+    /**
     QCOMPARE(items.size(), 17);
     
     // make them all selectable
@@ -128,8 +130,6 @@ void NotebookTest::testDiscretePlotLayout() {
     double ymax = scaley*1;
     double xmiddle = (xmax+xmin)/2;
     double ymiddle = (ymax+ymin)/2;
-    
-    /**
     
     // check title
     QCOMPARE(findText(scene, QPointF(xmiddle, -(ymax+3)), 0, QString("The Title")), 1);

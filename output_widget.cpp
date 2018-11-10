@@ -10,6 +10,7 @@ OutputWidget::OutputWidget(QWidget * parent){
     scene = new QGraphicsScene;
     view = new QGraphicsView(scene);
     // view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
+    // Changes output widget size, comment out to fit
     view->setFixedSize(500, 200);
     
     myPen = new QPen();
@@ -81,6 +82,52 @@ void OutputWidget::createPlot(Expression result){
     Expression ordLabel = result.get_property(Expression(Atom("\"ordinate-label\"")));
     Expression textScale = result.get_property(Expression(Atom("\"text-scale\"")));
     
+    // Constant layout parameters
+    const double N = 20;
+    const double A = 3;
+    const double B = 3;
+    const double C = 2;
+    const double D = 2;
+    const double P = 0.5;
+    
+    // Add the plot rectangle
+    double botRightX = P + (N / 2);
+    double botRightY = P + (N / 2);
+    double topLeftX = P - (N / 2);
+    double topLeftY = P - (N / 2);
+    QRect dataBox = QRect(QPoint(botRightX, botRightY), QPoint(topLeftX, topLeftY));
+    myPen->setWidth(0);
+    scene->addRect(dataBox, *myPen);
+    
+    // Add graph title
+    Expression titleLoc;
+    titleLoc.setHead(Atom("list"));
+    titleLoc.append(P);
+    titleLoc.append(Atom(topLeftY - A));
+    title.add_property(Expression(Atom("\"position\"")), titleLoc);
+    title.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    outputText(title);
+    
+    // Add graph x-axis label
+    Expression absLoc;
+    absLoc.setHead(Atom("list"));
+    absLoc.append(P);
+    absLoc.append(Atom(botRightY + A));
+    absLabel.add_property(Expression(Atom("\"position\"")), absLoc);
+    absLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    outputText(absLabel);
+    
+    // Add graph y-axis label
+    Expression ordLoc;
+    ordLoc.setHead(Atom("list"));
+    ordLoc.append(Atom(topLeftX - B));
+    ordLoc.append(P);
+    ordLabel.add_property(Expression(Atom("\"position\"")), ordLoc);
+    ordLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    // Rotate label by 90 degrees in radians
+    ordLabel.add_property(Expression(Atom("\"text-rotation\"")), Expression(Atom(std::atan2(0, -1)/-2)));
+    outputText(ordLabel);
+    
 }
 
 void OutputWidget::outputResult(Expression result){
@@ -119,8 +166,9 @@ void OutputWidget::outputText(Expression result){
         textSize = textScale.head().asNumber();
     }
     
-    if (textRotation.isHeadNumber() && textRotation.head().asNumber() > 0) {
+    if (textRotation.isHeadNumber()) {
         textRot = textRotation.head().asNumber();
+        textRot *= (180/std::atan2(0,-1));
     }
     
     // Setup font
@@ -135,10 +183,17 @@ void OutputWidget::outputText(Expression result){
     QString qResultString = QString::fromStdString(resultString.str());
     QGraphicsTextItem *text = scene->addText(qResultString);
     // Set rotation in radians
-    text->setRotation(textRot * (180/std::atan2(0,-1)));
+    text->setRotation(textRot);
     text->setFont(myTextFont);
     double newxLoc = xLoc - (text->boundingRect().width()/2);
     double newyLoc = yLoc - (text->boundingRect().height()/2);
+    
+    // Fix center when rotated
+    if (textRot != 0){
+        newxLoc = xLoc + (std::cos(textRot) * text->boundingRect().width() / 2);
+        newyLoc = yLoc - (std::sin(textRot) * text->boundingRect().width() / 2);
+    }
+    
     text->setPos(newxLoc, newyLoc);
     
 }
