@@ -30,6 +30,7 @@ public slots:
     
     void updateOutput(Expression result);
     void updateOutputError(Expression result);
+    void createPlot(Expression result);
     
     
 };

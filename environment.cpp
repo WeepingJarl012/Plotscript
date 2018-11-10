@@ -616,7 +616,7 @@ Expression getproperty(const std::vector<Expression> & args){
     
     if(nargs_equal(args,2)){
         if (!args[0].isHeadString()){
-            throw SemanticError("Error: first argument to set-property not a string");
+            throw SemanticError("Error: first argument to get-property not a string");
         } else {
             Expression exp = args[1];
             
@@ -625,6 +625,41 @@ Expression getproperty(const std::vector<Expression> & args){
     }
     else {
         throw SemanticError("Error: wrong number of arguments in call to get-property");
+    }
+    
+    return result;
+};
+
+Expression discretePlot(const std::vector<Expression> & args){
+    
+    Expression result;
+    result.setHead(Atom("discrete-plot"));
+    
+    if(nargs_equal(args,2)){
+        if (!args[0].isHeadList()){
+            throw SemanticError("Error: first argument to discrete-plot is not a list");
+        } else if (!args[1].isHeadList()){
+            throw SemanticError("Error: second argument to discrete-plot is not a list");
+        } else {
+            // Add all options as properties to expression
+            for (Expression::ConstIteratorType i = args[1].tailConstBegin(); i != args[1].tailConstEnd(); i++){
+                std::vector<const Expression> options;
+                
+                for (Expression::ConstIteratorType j = i->tailConstBegin(); j != i->tailConstEnd(); j++){
+                    options.emplace_back(*j);
+                }
+                
+                // Add property to result
+                result.add_property(options[0], options[1]);
+                
+            }
+            
+            // Add list of data to tail of result
+            result.append(args[0]);
+        }
+    }
+    else {
+        throw SemanticError("Error: wrong number of arguments in call to discrete-plot");
     }
     
     return result;
@@ -811,4 +846,7 @@ void Environment::reset(){
     
     // Procedure: get-property;
     envmap.emplace("get-property", EnvResult(ProcedureType, getproperty));
+    
+    // Procedure: get-property;
+    envmap.emplace("discrete-plot", EnvResult(ProcedureType, discretePlot));
 }

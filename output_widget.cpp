@@ -126,6 +126,12 @@ void OutputWidget::updateOutput(Expression result){
         
         
     } else if (result.isHeadComplex() || result.isHeadNone() || result.isHeadNumber() || result.isHeadString() || result.isHeadSymbol()) {
+        
+        // Check if it's a discrete plot
+        if (result.head().asSymbol() == "discrete-plot"){
+            createPlot(result);
+        }
+        
         std::stringstream resultString;
         
         if (!result.isHeadComplex() && !result.isHeadNone()){
@@ -161,5 +167,14 @@ void OutputWidget::updateOutputError(Expression result){
     
     QString qResultString = QString::fromStdString(resultString.str());
     scene->addText(qResultString);
+    
+}
+
+void OutputWidget::createPlot(Expression result){
+    
+    Expression title = result.get_property(Expression(Atom("\"title\"")));
+    Expression absLabel = result.get_property(Expression(Atom("\"abscissa-label\"")));
+    Expression ordLabel = result.get_property(Expression(Atom("\"ordinate-label\"")));
+    Expression textScale = result.get_property(Expression(Atom("\"text-scale\"")));
     
 }
