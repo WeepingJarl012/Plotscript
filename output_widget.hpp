@@ -26,11 +26,16 @@ private:
     QPen * myPen;
     bool outputList;
     
+    void createPlot(Expression result);
+    void outputResult(Expression result);
+    void outputText(Expression result);
+    void outputLine(Expression result);
+    void outputPoint(Expression result);
+    
 public slots:
     
     void updateOutput(Expression result);
     void updateOutputError(Expression result);
-    void createPlot(Expression result);
     
     
 };
