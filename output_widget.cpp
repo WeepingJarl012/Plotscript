@@ -205,8 +205,9 @@ void OutputWidget::createPlot(Expression result){
     outputText(alLabel);
     
     // Add grid
-    double xSpacing = (maxXVal - minXVal) / N;
-    double ySpacing = (maxYVal - minYVal) / N;
+    // double xSpacing = (maxXVal - minXVal) / N;
+    // double ySpacing = (maxYVal - minYVal) / N;
+    
     // Corners of the plot
     double botLX = topLeftX;
     double botLY = botRightY;
@@ -354,8 +355,8 @@ void OutputWidget::outputText(Expression result){
     // Set rotation in radians
     text->setRotation(textRot);
     text->setFont(myTextFont);
-    double newxLoc = xLoc - (text->boundingRect().width()/2);
-    double newyLoc = yLoc - (text->boundingRect().height()/2);
+    // double newxLoc = xLoc - (text->boundingRect().width()/2);
+    // double newyLoc = yLoc - (text->boundingRect().height()/2);
     
     // Fix center when rotated
     if (textRot != 0){

@@ -643,7 +643,7 @@ Expression discretePlot(const std::vector<Expression> & args){
         } else {
             // Add all options as properties to expression
             for (Expression::ConstIteratorType i = args[1].tailConstBegin(); i != args[1].tailConstEnd(); i++){
-                std::vector<const Expression> options;
+                std::vector<Expression> options;
                 
                 for (Expression::ConstIteratorType j = i->tailConstBegin(); j != i->tailConstEnd(); j++){
                     options.emplace_back(*j);
