@@ -104,7 +104,7 @@ void OutputWidget::createPlot(Expression result){
     Expression titleLoc;
     titleLoc.setHead(Atom("list"));
     titleLoc.append(center);
-    titleLoc.append(Atom(topLeftY - A));
+    titleLoc.append(Atom(topLeftY - A + 1));
     title.add_property(Expression(Atom("\"position\"")), titleLoc);
     title.add_property(Expression(Atom("\"text-scale\"")), textScale);
     outputText(title);
@@ -121,7 +121,7 @@ void OutputWidget::createPlot(Expression result){
     // Add graph y-axis label
     Expression ordLoc;
     ordLoc.setHead(Atom("list"));
-    ordLoc.append(Atom(topLeftX - B));
+    ordLoc.append(Atom(topLeftX - B + 1));
     ordLoc.append(center);
     ordLabel.add_property(Expression(Atom("\"position\"")), ordLoc);
     ordLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
@@ -212,8 +212,6 @@ void OutputWidget::createPlot(Expression result){
     double botLY = botRightY;
     double botRX = botRightX;
     double topLY = topLeftY;
-    // Finds 0 for x values
-    double tempXZero = minXVal;
     
     // Add x line for origin grid
     if (0 > minXVal && 0 < maxXVal){
@@ -277,8 +275,22 @@ void OutputWidget::createPlot(Expression result){
         newPoint.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
         
         newPoint.setHead(point.head());
-        newPoint.append(center + (N / 2 * point.tail()[-1].head().asNumber()));
-        newPoint.append(center - (N / 2 * point.tail()[0].head().asNumber()));
+        
+        // Find x/y coord relative to minimum x/y
+        double relativeX = ((0 - minXVal) * N / (point.tail()[-1].head().asNumber()));
+        double relativeY = 0 - ((0 - minYVal) * N / (point.tail()[0].head().asNumber()));
+        
+        if (relativeX > botRX){
+            // Put smallest x on x axis
+            relativeX = botLX;
+        }
+        if (relativeY < topLY){
+            // Put smalled y on y axis
+            relativeY = botLY;
+        }
+        
+        newPoint.append(1 + relativeX);
+        newPoint.append(relativeY);
         
         outputPoint(newPoint);
         
@@ -338,6 +350,7 @@ void OutputWidget::outputText(Expression result){
     
     QString qResultString = QString::fromStdString(resultString.str());
     QGraphicsTextItem *text = scene->addText(qResultString);
+    
     // Set rotation in radians
     text->setRotation(textRot);
     text->setFont(myTextFont);
@@ -346,11 +359,15 @@ void OutputWidget::outputText(Expression result){
     
     // Fix center when rotated
     if (textRot != 0){
-        newxLoc = xLoc + (std::cos(textRot) * text->boundingRect().width() / 2);
-        newyLoc = yLoc - (std::sin(textRot) * text->boundingRect().width() / 2);
+        // newxLoc = xLoc - (std::cos(textRot * std::atan2(0,-1) / 180) * text->boundingRect().width() / 2);
+        // newyLoc = yLoc - (std::sin(textRot * std::atan2(0,-1) / 180) * text->boundingRect().height() / 2);
+        // text->setPos(QPointF(xLoc, yLoc) + text->boundingRect().center());
+        text->setPos(xLoc - text->boundingRect().center().rx(), (yLoc + text->boundingRect().center().ry()));
+    } else {
+        text->setPos(QPointF(xLoc, yLoc) - text->boundingRect().center());
     }
     
-    text->setPos(newxLoc, newyLoc);
+    // text->setPos(newxLoc, newyLoc);
     
 }
 
