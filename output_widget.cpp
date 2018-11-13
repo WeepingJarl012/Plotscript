@@ -197,7 +197,7 @@ void OutputWidget::createPlot(Expression result){
     alLabel.setHead(Atom(resultAL.str()));
     Expression alLoc;
     alLoc.setHead(Atom("list"));
-    alLoc.append(topLeftX);
+    alLoc.append(topLeftX + 1);
     alLoc.append(Atom(botRightY + C));
     alLabel.add_property(Expression(Atom("\"position\"")), alLoc);
     alLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
