@@ -203,10 +203,6 @@ void OutputWidget::createPlot(Expression result){
     alLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
     outputText(alLabel);
     
-    // Add grid
-    // double xSpacing = (maxXVal - minXVal) / N;
-    // double ySpacing = (maxYVal - minYVal) / N;
-    
     // Corners of the plot
     double botLX = topLeftX;
     double botLY = botRightY;
@@ -389,7 +385,7 @@ void OutputWidget::outputText(Expression result){
         // newxLoc = xLoc - (std::cos(textRot * std::atan2(0,-1) / 180) * text->boundingRect().width() / 2);
         // newyLoc = yLoc - (std::sin(textRot * std::atan2(0,-1) / 180) * text->boundingRect().height() / 2);
         // text->setPos(QPointF(xLoc, yLoc) + text->boundingRect().center());
-        double width = text->boundingRect().center().ry();
+        // double width = text->boundingRect().center().ry();
         text->setPos(xLoc - text->boundingRect().center().rx(), (yLoc + text->boundingRect().center().ry()));
     } else {
         text->setPos(QPointF(xLoc, yLoc) - text->boundingRect().center());

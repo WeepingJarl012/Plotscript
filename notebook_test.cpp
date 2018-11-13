@@ -145,7 +145,7 @@ void NotebookTest::testDiscretePlotLayout() {
     QCOMPARE(findText(scene, QPointF(xmiddle, -(ymin-3)), 0, QString("X Label")), 1);
     
     // check ordinate label
-    // QCOMPARE(findText(scene, QPointF(xmin-3, -ymiddle), -90, QString("Y Label")), 1);
+    QCOMPARE(findText(scene, QPointF(xmin-3, -ymiddle), -90, QString("Y Label")), 1);
     
     // check abscissa min label
     QCOMPARE(findText(scene, QPointF(xmin, -(ymin-2)), 0, QString("-1")), 1);
@@ -154,10 +154,10 @@ void NotebookTest::testDiscretePlotLayout() {
     QCOMPARE(findText(scene, QPointF(xmax, -(ymin-2)), 0, QString("1")), 1);
     
     // check ordinate min label
-    // QCOMPARE(findText(scene, QPointF(xmin-2, -ymin), 0, QString("-1")), 1);
+    QCOMPARE(findText(scene, QPointF(xmin-2, -ymin), 0, QString("-1")), 1);
     
     // check ordinate max label
-    // QCOMPARE(findText(scene, QPointF(xmin-2, -ymax), 0, QString("1")), 1);
+    QCOMPARE(findText(scene, QPointF(xmin-2, -ymax), 0, QString("1")), 1);
     
     // check the bounding box bottom
     QCOMPARE(findLines(scene, QRectF(xmin, -ymin, 20, 0), 0.1), 1);
@@ -235,7 +235,7 @@ int NotebookTest::findText(QGraphicsScene * scene, QPointF center, qreal rotatio
     foreach(auto item, scene->items(center)){
         if(item->type() == QGraphicsTextItem::Type){
             QGraphicsTextItem * text = static_cast<QGraphicsTextItem *>(item);
-            QPointF rPos = text->pos() + text->boundingRect().center();
+            // QPointF rPos = text->pos() + text->boundingRect().center();
             if((text->toPlainText() == contents) &&
                (text->rotation() == rotation) &&
                (text->pos() + text->boundingRect().center() == center)){
