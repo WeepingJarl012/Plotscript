@@ -96,9 +96,16 @@ void OutputWidget::createPlot(Expression result){
     double botRightY = center + (N / 2);
     double topLeftX = center - (N / 2) - 1;
     double topLeftY = center - (N / 2) - 1;
-    QRect dataBox = QRect(QPoint(botRightX, botRightY), QPoint(topLeftX, topLeftY));
+    /**
+    QPoint botRight = QPoint(botRightX, botRightY);
+    QPoint topRight = QPoint(botRightX, topLeftY);
+    QPoint botLeft = QPoint(topLeftX, botRightY);
+    QPoint topLeft = QPoint(topLeftX, topLeftY);
+     **/
+    // QRect dataBox = QRect(QPoint(botRightX, botRightY), QPoint(topLeftX, topLeftY));
     myPen->setWidth(0);
-    scene->addRect(dataBox, *myPen);
+    outputBoundingPlot(botRightX, botRightY, topLeftX, topLeftY);
+    // scene->addRect(dataBox, *myPen);
     
     // Add graph title
     Expression titleLoc;
@@ -431,6 +438,101 @@ void OutputWidget::outputPoint(Expression result){
         scene->addText(qResultString);
     }
     
+}
+
+void OutputWidget::outputBoundingPlot(double botRightX, double botRightY, double topLeftX, double topLeftY){
+    
+    // Create left line
+    Expression leftLine;
+    leftLine.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"line\"")));
+    leftLine.add_property(Expression(Atom("\"thickness\"")), Expression(Atom(0)));
+    leftLine.setHead(Atom("list"));
+    
+    Expression point1ll;
+    Expression point2ll;
+    point1ll.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+    point2ll.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+    point1ll.setHead(Atom("list"));
+    point1ll.append(Atom(topLeftX));
+    point1ll.append(Atom(botRightY));
+    
+    point2ll.setHead(Atom("list"));
+    point2ll.append(Atom(topLeftX));
+    point2ll.append(Atom(topLeftY));
+    
+    leftLine.append(point1ll);
+    leftLine.append(point2ll);
+    
+    outputLine(leftLine);
+    
+    // Create right line
+    Expression rightLine;
+    rightLine.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"line\"")));
+    rightLine.add_property(Expression(Atom("\"thickness\"")), Expression(Atom(0)));
+    rightLine.setHead(Atom("list"));
+    
+    Expression point1rl;
+    Expression point2rl;
+    point1rl.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+    point2rl.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+    point1rl.setHead(Atom("list"));
+    point1rl.append(Atom(botRightX));
+    point1rl.append(Atom(botRightY));
+    
+    point2rl.setHead(Atom("list"));
+    point2rl.append(Atom(botRightX));
+    point2rl.append(Atom(topLeftY));
+    
+    rightLine.append(point1rl);
+    rightLine.append(point2rl);
+    
+    outputLine(rightLine);
+    
+    // Create top line
+    Expression topLine;
+    topLine.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"line\"")));
+    topLine.add_property(Expression(Atom("\"thickness\"")), Expression(Atom(0)));
+    topLine.setHead(Atom("list"));
+    
+    Expression point1tl;
+    Expression point2tl;
+    point1tl.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+    point2tl.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+    point1tl.setHead(Atom("list"));
+    point1tl.append(Atom(topLeftX));
+    point1tl.append(Atom(topLeftY));
+    
+    point2tl.setHead(Atom("list"));
+    point2tl.append(Atom(botRightX));
+    point2tl.append(Atom(topLeftY));
+    
+    topLine.append(point1tl);
+    topLine.append(point2tl);
+    
+    outputLine(topLine);
+    
+    // Create bottom line
+    Expression bottomLine;
+    bottomLine.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"line\"")));
+    bottomLine.add_property(Expression(Atom("\"thickness\"")), Expression(Atom(0)));
+    bottomLine.setHead(Atom("list"));
+    
+    Expression point1bl;
+    Expression point2bl;
+    point1bl.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+    point2bl.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+    point1bl.setHead(Atom("list"));
+    point1bl.append(Atom(botRightX));
+    point1bl.append(Atom(botRightY));
+    
+    point2bl.setHead(Atom("list"));
+    point2bl.append(Atom(topLeftX));
+    point2bl.append(Atom(botRightY));
+    
+    bottomLine.append(point1bl);
+    bottomLine.append(point2bl);
+    
+    outputLine(bottomLine);
 }
 
 

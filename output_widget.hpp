@@ -31,6 +31,7 @@ private:
     void outputText(Expression result);
     void outputLine(Expression result);
     void outputPoint(Expression result);
+    void outputBoundingPlot(double botRightX, double botRightY, double topLeftX, double topLeftY);
     
 public slots:
     
