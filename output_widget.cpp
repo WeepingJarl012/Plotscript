@@ -376,41 +376,9 @@ void OutputWidget::outputText(Expression result){
     
     // Set rotation in radians
     text->setFont(myTextFont);
-    // scene->addEllipse(text->transformOriginPoint().rx(), text->transformOriginPoint().ry(), 0.1, 0.1);
     text->setPos(xLoc - (text->boundingRect().width()/2), yLoc - (text->boundingRect().height()/2));
     text->setTransformOriginPoint(text->boundingRect().center());
     text->setRotation(textRot);
-    // transform.translate(xLoc - (text->boundingRect().width()/2), yLoc - (text->boundingRect().height()/2)).rotate(-90);
-    // scene->addEllipse(text->transformOriginPoint().rx(), text->transformOriginPoint().ry(), 0.1, 0.1);
-    // text->QGraphicsTransform
-    //text->setTransform(transform);
-    //scene->addEllipse(text->transformOriginPoint().rx(), text->transformOriginPoint().ry(), 0.1, 0.1);
-    // scene->addEllipse(text->transform().dx(), text->transform().dy(), 0.1, 0.1);
-    // transform.translate(10, 10);
-    // text->setTransform(transform);
-    // scene->addEllipse(text->boundingRect());
-    //text->setFont(myTextFont);
-    // text->setTransformOriginPoint(text->boundingRect().center());
-    //transform.translate(1000, 1000);
-    // text->setRotation(textRot);
-    // text->setFont(myTextFont);
-    // text->setPos(QPointF(xLoc, yLoc));
-    
-    // double newxLoc = xLoc - (text->boundingRect().width()/2);
-    // double newyLoc = yLoc - (text->boundingRect().height()/2);
-    
-    // Fix center when rotated
-    if (textRot != 0){
-        // newxLoc = xLoc - (std::cos(textRot * std::atan2(0,-1) / 180) * text->boundingRect().width() / 2);
-        // newyLoc = yLoc - (std::sin(textRot * std::atan2(0,-1) / 180) * text->boundingRect().height() / 2);
-        // text->setPos(QPointF(xLoc, yLoc) + text->boundingRect().center());
-        // double width = text->boundingRect().center().ry();
-        // text->setPos(xLoc - text->boundingRect().center().rx(), (yLoc + text->boundingRect().center().ry()));
-    } else {
-        // text->setPos(QPointF(xLoc, yLoc) - text->boundingRect().center());
-    }
-    
-    // text->setPos(newxLoc, newyLoc);
     
 }
 
