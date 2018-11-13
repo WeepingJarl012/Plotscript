@@ -248,9 +248,12 @@ void OutputWidget::createPlot(Expression result){
         outputLine(line);
     }
     
+    double plotZeroY;
+    
     // Add y line for origin grid
     if (0 > minYVal && 0 < maxYVal){
         double zeroY = botLY - ((0 - minYVal) * N / (maxYVal - minYVal));
+        plotZeroY = zeroY;
         
         Expression line;
         line.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"line\"")));
@@ -299,6 +302,24 @@ void OutputWidget::createPlot(Expression result){
         
         newPoint.append(1 + relativeX);
         newPoint.append(relativeY);
+        
+        // Create line to point
+        Expression pointLine;
+        pointLine.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"line\"")));
+        pointLine.add_property(Expression(Atom("\"thickness\"")), Expression(Atom(0)));
+        pointLine.setHead(Atom("list"));
+        
+        Expression point1l;
+        Expression point2l;
+        point1l.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+        point1l.setHead(Atom("list"));
+        point1l.append(Atom(1 + relativeX));
+        point1l.append(Atom(plotZeroY));
+        
+        pointLine.append(point1l);
+        pointLine.append(newPoint);
+        
+        outputLine(pointLine);
         
         outputPoint(newPoint);
         
@@ -499,12 +520,12 @@ void OutputWidget::outputBoundingPlot(double botRightX, double botRightY, double
     point1tl.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
     point2tl.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
     point1tl.setHead(Atom("list"));
-    point1tl.append(Atom(topLeftX));
-    point1tl.append(Atom(topLeftY));
+    point1tl.append(Atom(topLeftX + 1));
+    point1tl.append(Atom(topLeftY + 1));
     
     point2tl.setHead(Atom("list"));
     point2tl.append(Atom(botRightX));
-    point2tl.append(Atom(topLeftY));
+    point2tl.append(Atom(topLeftY + 1));
     
     topLine.append(point1tl);
     topLine.append(point2tl);
@@ -526,7 +547,7 @@ void OutputWidget::outputBoundingPlot(double botRightX, double botRightY, double
     point1bl.append(Atom(botRightY));
     
     point2bl.setHead(Atom("list"));
-    point2bl.append(Atom(topLeftX));
+    point2bl.append(Atom(topLeftX + 1));
     point2bl.append(Atom(botRightY));
     
     bottomLine.append(point1bl);
