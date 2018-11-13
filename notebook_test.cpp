@@ -148,7 +148,7 @@ void NotebookTest::testDiscretePlotLayout() {
     // QCOMPARE(findText(scene, QPointF(xmin-3, -ymiddle), -90, QString("Y Label")), 1);
     
     // check abscissa min label
-    // QCOMPARE(findText(scene, QPointF(xmin, -(ymin-2)), 0, QString("-1")), 1);
+    QCOMPARE(findText(scene, QPointF(xmin, -(ymin-2)), 0, QString("-1")), 1);
     
     // check abscissa max label
     QCOMPARE(findText(scene, QPointF(xmax, -(ymin-2)), 0, QString("1")), 1);

@@ -96,16 +96,8 @@ void OutputWidget::createPlot(Expression result){
     double botRightY = center + (N / 2);
     double topLeftX = center - (N / 2) - 1;
     double topLeftY = center - (N / 2) - 1;
-    /**
-    QPoint botRight = QPoint(botRightX, botRightY);
-    QPoint topRight = QPoint(botRightX, topLeftY);
-    QPoint botLeft = QPoint(topLeftX, botRightY);
-    QPoint topLeft = QPoint(topLeftX, topLeftY);
-     **/
-    // QRect dataBox = QRect(QPoint(botRightX, botRightY), QPoint(topLeftX, topLeftY));
     myPen->setWidth(0);
     outputBoundingPlot(botRightX, botRightY, topLeftX, topLeftY);
-    // scene->addRect(dataBox, *myPen);
     
     // Add graph title
     Expression titleLoc;
@@ -474,12 +466,12 @@ void OutputWidget::outputBoundingPlot(double botRightX, double botRightY, double
     point1ll.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
     point2ll.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
     point1ll.setHead(Atom("list"));
-    point1ll.append(Atom(topLeftX));
+    point1ll.append(Atom(topLeftX + 1));
     point1ll.append(Atom(botRightY));
     
     point2ll.setHead(Atom("list"));
-    point2ll.append(Atom(topLeftX));
-    point2ll.append(Atom(topLeftY));
+    point2ll.append(Atom(topLeftX + 1));
+    point2ll.append(Atom(topLeftY + 1));
     
     leftLine.append(point1ll);
     leftLine.append(point2ll);
@@ -502,7 +494,7 @@ void OutputWidget::outputBoundingPlot(double botRightX, double botRightY, double
     
     point2rl.setHead(Atom("list"));
     point2rl.append(Atom(botRightX));
-    point2rl.append(Atom(topLeftY));
+    point2rl.append(Atom(topLeftY + 1));
     
     rightLine.append(point1rl);
     rightLine.append(point2rl);
