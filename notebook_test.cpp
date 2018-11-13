@@ -166,10 +166,10 @@ void NotebookTest::testDiscretePlotLayout() {
     QCOMPARE(findLines(scene, QRectF(xmin, -ymax, 20, 0), 0.1), 1);
     
     // check the bounding box left and (-1, -1) stem
-    // QCOMPARE(findLines(scene, QRectF(xmin, -ymax, 0, 20), 0.1), 2);
+    QCOMPARE(findLines(scene, QRectF(xmin, -ymax, 0, 20), 0.1), 2);
     
     // check the bounding box right and (1, 1) stem
-    // QCOMPARE(findLines(scene, QRectF(xmax, -ymax, 0, 20), 0.1), 2);
+    QCOMPARE(findLines(scene, QRectF(xmax, -ymax, 0, 20), 0.1), 2);
     
     // check the abscissa axis
     QCOMPARE(findLines(scene, QRectF(xmin, 0, 20, 0), 0.1), 1);
@@ -178,10 +178,10 @@ void NotebookTest::testDiscretePlotLayout() {
     QCOMPARE(findLines(scene, QRectF(0, -ymax, 0, 20), 0.1), 1);
     
     // check the point at (-1,-1)
-    // QCOMPARE(findPoints(scene, QPointF(-10, 10), 0.6), 1);
+    QCOMPARE(findPoints(scene, QPointF(-10, 10), 0.6), 1);
     
     // check the point at (1,1)
-    // QCOMPARE(findPoints(scene, QPointF(10, -10), 0.6), 1);
+    QCOMPARE(findPoints(scene, QPointF(10, -10), 0.6), 1);
 }
 
 /*

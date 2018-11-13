@@ -280,16 +280,22 @@ void OutputWidget::createPlot(Expression result){
         newPoint.setHead(point.head());
         
         // Find x/y coord relative to minimum x/y
-        double relativeX = ((0 - minXVal) * N / (point.tail()[-1].head().asNumber()));
-        double relativeY = 0 - ((0 - minYVal) * N / (point.tail()[0].head().asNumber()));
+        double xFromLeft = (minXVal - point.tail()[-1].head().asNumber());
+        double yFromBot = (minYVal - point.tail()[0].head().asNumber());
         
-        if (relativeX > botRX){
-            // Put smallest x on x axis
+        double relativeX;
+        double relativeY;
+        
+        if (xFromLeft == 0) {
             relativeX = botLX;
+        } else {
+            relativeX = botLX - (xFromLeft * N / abs(xFromLeft));
         }
-        if (relativeY < topLY){
-            // Put smalled y on y axis
+        
+        if (yFromBot == 0){
             relativeY = botLY;
+        } else {
+            relativeY = botLY + (yFromBot * N / abs(yFromBot));
         }
         
         newPoint.append(1 + relativeX);
@@ -383,6 +389,7 @@ void OutputWidget::outputText(Expression result){
         // newxLoc = xLoc - (std::cos(textRot * std::atan2(0,-1) / 180) * text->boundingRect().width() / 2);
         // newyLoc = yLoc - (std::sin(textRot * std::atan2(0,-1) / 180) * text->boundingRect().height() / 2);
         // text->setPos(QPointF(xLoc, yLoc) + text->boundingRect().center());
+        double width = text->boundingRect().center().ry();
         text->setPos(xLoc - text->boundingRect().center().rx(), (yLoc + text->boundingRect().center().ry()));
     } else {
         text->setPos(QPointF(xLoc, yLoc) - text->boundingRect().center());
@@ -441,7 +448,8 @@ void OutputWidget::outputPoint(Expression result){
     double yLoc = result.tail()[0].head().asNumber() - (size / 2);
     
     if (size >= 0){
-        scene->addEllipse(xLoc, yLoc, size, size, QPen(), QBrush(Qt::black, Qt::SolidPattern));
+        // Qt::NoPen() instead of QPen()
+        scene->addEllipse(xLoc, yLoc, size, size, Qt::NoPen, QBrush(Qt::black, Qt::SolidPattern));
     } else {
         std::stringstream resultString;
         
