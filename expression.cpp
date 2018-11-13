@@ -387,6 +387,7 @@ Expression Expression::handle_apply(Environment & env){
 Expression Expression::handle_map(Environment & env){
     Expression results;
     Expression currentResult;
+    bool secondArgRange = false;
     
     results.setHead(Atom("list"));
     
@@ -395,7 +396,11 @@ Expression Expression::handle_map(Environment & env){
     }
     
     if (!m_tail[1].isHeadList()){
-        throw SemanticError("Error: second argument to map not a list");
+        if (m_tail[1].isHeadSymbol() && m_tail[1].head().asSymbol() != "range"){
+            throw SemanticError("Error: second argument to map not a list");
+        } else if (m_tail[1].isHeadSymbol() && m_tail[1].head().asSymbol() == "range"){
+            secondArgRange = true;
+        }
     }
     
     // must have two arguments
@@ -409,7 +414,19 @@ Expression Expression::handle_map(Environment & env){
             passToApply.setHead(Atom("apply"));
             passToApply.append(m_tail[0]);
             passToApply.append((Atom("list")));
-            passToApply.m_tail[1].append(*it);
+            
+            if (!secondArgRange){
+                passToApply.m_tail[1].append(*it);
+            } else {
+                Expression applyRange;
+                applyRange.setHead(Atom("apply"));
+                applyRange.append(Atom("range"));
+                applyRange.append((Atom("list")));
+                Expression pass;
+                pass.setHead(Atom("list"));
+                applyRange.append(m_tail[1]);
+                passToApply.append(applyRange.eval(env));
+            }
             
             results.append(passToApply.eval(env));
         }
