@@ -285,13 +285,13 @@ void OutputWidget::createPlot(Expression result){
         if (xFromLeft == 0) {
             relativeX = botLX;
         } else {
-            relativeX = botLX - (xFromLeft * N / abs(xFromLeft));
+            relativeX = botLX - (xFromLeft * N / abs(minXVal - maxXVal));
         }
         
         if (yFromBot == 0){
             relativeY = botLY;
         } else {
-            relativeY = botLY + (yFromBot * N / abs(yFromBot));
+            relativeY = botLY + (yFromBot * N / abs(minYVal - maxYVal));
         }
         
         newPoint.append(1 + relativeX);

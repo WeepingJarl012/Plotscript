@@ -54,6 +54,9 @@ public:
     /// append Expression to tail of the expression
     void append(const Expression & a);
     
+    /// return the current size of the tail
+    int tailSize() const noexcept;
+    
     /// Add a new property to an expression
     void add_property(const Expression & key, const Expression & value);
     

@@ -125,6 +125,10 @@ void Expression::append(const Expression & a){
     m_tail.emplace_back(a);
 }
 
+int Expression::tailSize() const noexcept {
+    return m_tail.size();
+}
+
 void Expression::add_property(const Expression & key, const Expression & value) {
     // Check if key already exists
     auto result = properties.find(key.head().asSymbol());
@@ -396,17 +400,19 @@ Expression Expression::handle_map(Environment & env){
     }
     
     if (!m_tail[1].isHeadList()){
-        if (m_tail[1].isHeadSymbol() && m_tail[1].head().asSymbol() != "range"){
-            throw SemanticError("Error: second argument to map not a list");
-        } else if (m_tail[1].isHeadSymbol() && m_tail[1].head().asSymbol() == "range"){
+        if (m_tail[1].isHeadSymbol() && m_tail[1].head().asSymbol() == "range"){
             secondArgRange = true;
+        } else {
+            throw SemanticError("Error: second argument to map not a list");
         }
     }
     
     // must have two arguments
     if(m_tail.size() != 2){
         throw SemanticError("Error during evaluation: invalid number of arguments to map");
-    } else {
+    }
+    
+    if (!secondArgRange){
         
         for(Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].m_tail.end(); ++it){
             
@@ -414,19 +420,32 @@ Expression Expression::handle_map(Environment & env){
             passToApply.setHead(Atom("apply"));
             passToApply.append(m_tail[0]);
             passToApply.append((Atom("list")));
+            passToApply.m_tail[1].append(*it);
             
-            if (!secondArgRange){
-                passToApply.m_tail[1].append(*it);
-            } else {
-                Expression applyRange;
-                applyRange.setHead(Atom("apply"));
-                applyRange.append(Atom("range"));
-                applyRange.append((Atom("list")));
-                Expression pass;
-                pass.setHead(Atom("list"));
-                applyRange.append(m_tail[1]);
-                passToApply.append(applyRange.eval(env));
-            }
+            results.append(passToApply.eval(env));
+        }
+        
+    } else {
+        
+        Expression passRangeToApply;
+        
+        for(Expression::IteratorType it = m_tail[1].m_tail.begin(); it != m_tail[1].m_tail.end(); ++it){
+            
+            passRangeToApply.setHead(Atom("range"));
+            passRangeToApply.append(*it);
+            
+        }
+        
+        Expression rangeResult;
+        rangeResult.append(passRangeToApply.eval(env));
+        
+        for(Expression::IteratorType it = rangeResult.m_tail[0].m_tail.begin(); it != rangeResult.m_tail[0].m_tail.end(); ++it){
+            
+            Expression passToApply;
+            passToApply.setHead(Atom("apply"));
+            passToApply.append(m_tail[0]);
+            passToApply.append((Atom("list")));
+            passToApply.m_tail[1].append(*it);
             
             results.append(passToApply.eval(env));
         }
