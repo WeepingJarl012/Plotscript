@@ -325,6 +325,8 @@ void OutputWidget::createDiscretePlot(Expression result){
 
 void OutputWidget::createContinuousPlot(Expression result){
     
+    // I'm dumb rip
+    
     Expression title = result.get_property(Expression(Atom("\"title\"")));
     Expression absLabel = result.get_property(Expression(Atom("\"abscissa-label\"")));
     Expression ordLabel = result.get_property(Expression(Atom("\"ordinate-label\"")));
