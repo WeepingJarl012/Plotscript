@@ -662,13 +662,50 @@ Expression discretePlot(const std::vector<Expression> & args){
                 result.append(point);
                 
             }
-            
-            // Add list of data to tail of result
-            // result.append(args[0]);
         }
     }
     else {
         throw SemanticError("Error: wrong number of arguments in call to discrete-plot");
+    }
+    
+    return result;
+};
+
+Expression continuousPlot(const std::vector<Expression> & args){
+    
+    Expression result;
+    result.setHead(Atom("continuous-plot"));
+    
+    if(nargs_equal(args,3)){
+        if (!args[0].isHeadLambda()){
+            throw SemanticError("Error: first argument to continuous-plot is not a list");
+        } else if (!args[1].isHeadList()){
+            throw SemanticError("Error: second argument to continuous-plot is not a list");
+        }  else if (!args[2].isHeadList()){
+            throw SemanticError("Error: second argument to continuous-plot is not a list");
+        } else {
+            // Add all options as properties to expression
+            for (Expression::ConstIteratorType i = args[2].tailConstBegin(); i != args[2].tailConstEnd(); i++){
+                std::vector<Expression> options;
+                
+                for (Expression::ConstIteratorType j = i->tailConstBegin(); j != i->tailConstEnd(); j++){
+                    options.emplace_back(*j);
+                }
+                
+                // Add property to result
+                result.add_property(options[0], options[1]);
+                
+            }
+            
+            
+            // Add all data as points
+            for (Expression::ConstIteratorType i = args[1].tailConstBegin(); i != args[1].tailConstEnd(); i++){
+                result.append(*i);
+            }
+        }
+    }
+    else {
+        throw SemanticError("Error: wrong number of arguments in call to continuous-plot");
     }
     
     return result;
@@ -856,6 +893,9 @@ void Environment::reset(){
     // Procedure: get-property;
     envmap.emplace("get-property", EnvResult(ProcedureType, getproperty));
     
-    // Procedure: get-property;
+    // Procedure: discrete-plot;
     envmap.emplace("discrete-plot", EnvResult(ProcedureType, discretePlot));
+    
+    // Procedure: continuous-plot;
+    envmap.emplace("continuous-plot", EnvResult(ProcedureType, continuousPlot));
 }
