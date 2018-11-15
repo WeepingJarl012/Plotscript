@@ -45,7 +45,7 @@ void OutputWidget::updateOutput(Expression result){
         
         // Check if it's a discrete plot
         if (result.head().asSymbol() == "discrete-plot"){
-            createPlot(result);
+            createDiscretePlot(result);
         } else {
             outputResult(result);
         }
@@ -75,7 +75,7 @@ void OutputWidget::updateOutputError(Expression result){
     
 }
 
-void OutputWidget::createPlot(Expression result){
+void OutputWidget::createDiscretePlot(Expression result){
     
     Expression title = result.get_property(Expression(Atom("\"title\"")));
     Expression absLabel = result.get_property(Expression(Atom("\"abscissa-label\"")));

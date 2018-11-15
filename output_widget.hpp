@@ -26,7 +26,7 @@ private:
     QPen * myPen;
     bool outputList;
     
-    void createPlot(Expression result);
+    void createDiscretePlot(Expression result);
     void outputResult(Expression result);
     void outputText(Expression result);
     void outputLine(Expression result);
