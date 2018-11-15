@@ -495,7 +495,11 @@ Expression Expression::eval(Environment & env){
     else{ 
         std::vector<Expression> results;
         for(Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it){
-            results.push_back(it->eval(env));
+            if (m_head.isSymbol() && m_head.asSymbol() == "continuous-plot"){
+                results.push_back(*it);
+            } else {
+                results.push_back(it->eval(env));
+            }
         }
         return apply(m_head, results, env);
     }

@@ -46,6 +46,8 @@ void OutputWidget::updateOutput(Expression result){
         // Check if it's a discrete plot
         if (result.head().asSymbol() == "discrete-plot"){
             createDiscretePlot(result);
+        } else if (result.head().asSymbol() == "continuous-plot"){
+            createContinuousPlot(result);
         } else {
             outputResult(result);
         }
@@ -318,6 +320,194 @@ void OutputWidget::createDiscretePlot(Expression result){
         outputPoint(newPoint);
         
     }
+    
+}
+
+void OutputWidget::createContinuousPlot(Expression result){
+    
+    Expression title = result.get_property(Expression(Atom("\"title\"")));
+    Expression absLabel = result.get_property(Expression(Atom("\"abscissa-label\"")));
+    Expression ordLabel = result.get_property(Expression(Atom("\"ordinate-label\"")));
+    Expression textScale = result.get_property(Expression(Atom("\"text-scale\"")));
+    
+    // Constant layout parameters
+    const double N = 20;
+    const double A = 3;
+    const double B = 3;
+    const double C = 2;
+    const double D = 2;
+    // const double P = 0.5;
+    const double center = 0;
+    
+    // Add the plot rectangle
+    double botRightX = center + (N / 2);
+    double botRightY = center + (N / 2);
+    double topLeftX = center - (N / 2) - 1;
+    double topLeftY = center - (N / 2) - 1;
+    myPen->setWidth(0);
+    outputBoundingPlot(botRightX, botRightY, topLeftX, topLeftY);
+    
+    // Add graph title
+    Expression titleLoc;
+    titleLoc.setHead(Atom("list"));
+    titleLoc.append(center);
+    titleLoc.append(Atom(topLeftY - A + 1));
+    title.add_property(Expression(Atom("\"position\"")), titleLoc);
+    title.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    outputText(title);
+    
+    // Add graph x-axis label
+    Expression absLoc;
+    absLoc.setHead(Atom("list"));
+    absLoc.append(center);
+    absLoc.append(Atom(botRightY + A));
+    absLabel.add_property(Expression(Atom("\"position\"")), absLoc);
+    absLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    outputText(absLabel);
+    
+    // Add graph y-axis label
+    Expression ordLoc;
+    ordLoc.setHead(Atom("list"));
+    ordLoc.append(Atom(topLeftX - B + 1));
+    ordLoc.append(center);
+    ordLabel.add_property(Expression(Atom("\"position\"")), ordLoc);
+    ordLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    // Rotate label by 90 degrees in radians
+    ordLabel.add_property(Expression(Atom("\"text-rotation\"")), Expression(Atom(std::atan2(0, -1)/-2)));
+    outputText(ordLabel);
+    
+    // Get min and max for x and y values
+    double maxXVal = 0;
+    double maxYVal = 0;
+    double minXVal = 0;
+    double minYVal = 0;
+    for (Expression::ConstIteratorType i = result.tailConstBegin(); i != result.tailConstEnd(); i++){
+        if (i->isHeadNumber()){
+            if (i->head().asNumber() < minXVal){
+                minXVal = i->head().asNumber();
+            } else {
+                maxXVal = i->head().asNumber();
+            }
+        }
+    }
+    
+    
+    // Add graph ou label
+    Expression ouLabel;
+    std::stringstream resultOU;
+    resultOU << "\"" << std::setprecision(2) << maxYVal << "\"";
+    ouLabel.setHead(Atom(resultOU.str()));
+    Expression ouLoc;
+    ouLoc.setHead(Atom("list"));
+    ouLoc.append(Atom(topLeftX - D + 1));
+    ouLoc.append(topLeftY + 1);
+    ouLabel.add_property(Expression(Atom("\"position\"")), ouLoc);
+    ouLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    outputText(ouLabel);
+    
+    // Add graph ol label
+    Expression olLabel;
+    std::stringstream resultOL;
+    resultOL << "\"" << std::setprecision(2) << minYVal << "\"";
+    olLabel.setHead(Atom(resultOL.str()));
+    Expression olLoc;
+    olLoc.setHead(Atom("list"));
+    olLoc.append(Atom(topLeftX - D + 1));
+    olLoc.append(botRightY);
+    olLabel.add_property(Expression(Atom("\"position\"")), olLoc);
+    olLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    outputText(olLabel);
+    
+    // Add graph au label
+    Expression auLabel;
+    std::stringstream resultAU;
+    resultAU << "\"" << std::setprecision(2) << maxXVal << "\"";
+    auLabel.setHead(Atom(resultAU.str()));
+    Expression auLoc;
+    auLoc.setHead(Atom("list"));
+    auLoc.append(botRightX);
+    auLoc.append(Atom(botRightY + C));
+    auLabel.add_property(Expression(Atom("\"position\"")), auLoc);
+    auLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    outputText(auLabel);
+    
+    // Add graph al label
+    Expression alLabel;
+    std::stringstream resultAL;
+    resultAL << "\"" << std::setprecision(2) << minXVal << "\"";
+    alLabel.setHead(Atom(resultAL.str()));
+    Expression alLoc;
+    alLoc.setHead(Atom("list"));
+    alLoc.append(topLeftX + 1);
+    alLoc.append(Atom(botRightY + C));
+    alLabel.add_property(Expression(Atom("\"position\"")), alLoc);
+    alLabel.add_property(Expression(Atom("\"text-scale\"")), textScale);
+    outputText(alLabel);
+    
+    // Corners of the plot
+    double botLX = topLeftX;
+    double botLY = botRightY;
+    double botRX = botRightX;
+    double topLY = topLeftY;
+    
+    // Add x line for origin grid
+    if (0 > minXVal && 0 < maxXVal){
+        double zeroX = botLX + ((0 - minXVal) * N / (maxXVal - minXVal)) + 1;
+        
+        Expression line;
+        line.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"line\"")));
+        line.add_property(Expression(Atom("\"thickness\"")), Expression(Atom(0)));
+        line.setHead(Atom("list"));
+        
+        Expression point1;
+        Expression point2;
+        point1.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+        point2.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+        point1.setHead(Atom("list"));
+        point1.append(Atom(zeroX));
+        point1.append(Atom(botLY));
+        
+        point2.setHead(Atom("list"));
+        point2.append(Atom(zeroX));
+        point2.append(Atom(topLY + 1));
+        
+        line.append(point1);
+        line.append(point2);
+        
+        outputLine(line);
+    }
+    
+    // double plotZeroY;
+    
+    // Add y line for origin grid
+    if (0 > minYVal && 0 < maxYVal){
+        double zeroY = botLY - ((0 - minYVal) * N / (maxYVal - minYVal));
+        // plotZeroY = zeroY;
+        
+        Expression line;
+        line.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"line\"")));
+        line.add_property(Expression(Atom("\"thickness\"")), Expression(Atom(0)));
+        line.setHead(Atom("list"));
+        
+        Expression point1;
+        Expression point2;
+        point1.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+        point2.add_property(Expression(Atom("\"object-name\"")), Expression(Atom("\"point\"")));
+        point1.setHead(Atom("list"));
+        point1.append(Atom(botLX + 1));
+        point1.append(Atom(zeroY));
+        
+        point2.setHead(Atom("list"));
+        point2.append(Atom(botRX));
+        point2.append(Atom(zeroY));
+        
+        line.append(point1);
+        line.append(point2);
+        
+        outputLine(line);
+    }
+    
+    // Add points
     
 }
 

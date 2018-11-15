@@ -677,7 +677,7 @@ Expression continuousPlot(const std::vector<Expression> & args){
     result.setHead(Atom("continuous-plot"));
     
     if(nargs_equal(args,3)){
-        if (!args[0].isHeadLambda()){
+        if (!args[0].isHeadSymbol()){
             throw SemanticError("Error: first argument to continuous-plot is not a list");
         } else if (!args[1].isHeadList()){
             throw SemanticError("Error: second argument to continuous-plot is not a list");

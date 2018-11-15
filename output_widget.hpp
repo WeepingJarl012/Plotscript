@@ -27,6 +27,7 @@ private:
     bool outputList;
     
     void createDiscretePlot(Expression result);
+    void createContinuousPlot(Expression result);
     void outputResult(Expression result);
     void outputText(Expression result);
     void outputLine(Expression result);
