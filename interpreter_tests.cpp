@@ -4,10 +4,12 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <thread>
 
 #include "semantic_error.hpp"
 #include "interpreter.hpp"
 #include "expression.hpp"
+#include "map.hpp"
 
 Expression run(const std::string & program){
     
@@ -1235,17 +1237,32 @@ TEST_CASE( "Test using number as procedure", "[interpreter]" ) {
     REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
 }
 
+void worker(Map & map){
+    
+    for (int i = 0; i < 10; ++i){
+        std::string key = "key" + std::to_string(i);
+        Expression value = *new Expression(i);
+        map.emplace(key, value);
+    }
+}
+
 TEST_CASE( "Test thread safe map", "[interpreter]" ) {
-    std::string input = R"(
-    (1 2 3)
-    )";
     
-    Interpreter interp;
+    Map myMap;
     
-    std::istringstream iss(input);
+    std::thread th1(worker, std::ref(myMap));
+    std::thread th2(worker, std::ref(myMap));
     
-    bool ok = interp.parseStream(iss);
-    REQUIRE(ok == true);
+    while(myMap.size() < 20){
+        Expression result;
+        std::size_t i = 0;
+        while(myMap.find("key" + std::to_string(i), result)){
+            std::cout << result << " ";
+            i++;
+        }
+        std::cout << "\n";
+    }
     
-    REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+    th1.join();
+    th2.join();
 }

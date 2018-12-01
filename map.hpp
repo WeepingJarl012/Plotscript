@@ -26,13 +26,14 @@ public:
     }
     
     // Returns the value mapped to the requested key, empty expression if not found
-    Expression find(std::string key){
+    bool find(std::string key, Expression & result){
         std::lock_guard<std::mutex> lock(the_mutex);
         auto search = the_map.find(key);
         if (search != the_map.end()){
-            return search->second;
+            result = search->second;
+            return true;
         } else {
-            return Expression();
+            return false;
         }
     }
     
