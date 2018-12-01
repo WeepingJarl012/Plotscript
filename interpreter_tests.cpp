@@ -1253,12 +1253,12 @@ TEST_CASE( "Test thread safe map", "[interpreter]" ) {
     std::thread th1(worker, std::ref(myMap));
     std::thread th2(worker, std::ref(myMap));
     
-    while(myMap.size() < 20){
+    for (int i = 0; i < 5; i++){
         Expression result;
-        std::size_t i = 0;
-        while(myMap.find("key" + std::to_string(i), result)){
+        std::size_t j = 0;
+        while(myMap.find("key" + std::to_string(j), result)){
             std::cout << result << " ";
-            i++;
+            j++;
         }
         std::cout << "\n";
     }
