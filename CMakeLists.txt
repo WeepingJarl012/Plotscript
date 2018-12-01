@@ -15,6 +15,7 @@ set(interpreter_src
   expression.hpp expression.cpp
   parse.hpp parse.cpp
   interpreter.hpp interpreter.cpp
+  queue.hpp
   )
 
 # EDIT
