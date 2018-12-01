@@ -1234,3 +1234,18 @@ TEST_CASE( "Test using number as procedure", "[interpreter]" ) {
     
     REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
 }
+
+TEST_CASE( "Test thread safe map", "[interpreter]" ) {
+    std::string input = R"(
+    (1 2 3)
+    )";
+    
+    Interpreter interp;
+    
+    std::istringstream iss(input);
+    
+    bool ok = interp.parseStream(iss);
+    REQUIRE(ok == true);
+    
+    REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+}
