@@ -297,20 +297,18 @@ Expression ln(const std::vector<Expression> & args){
 Expression sin(const std::vector<Expression> & args){
     
     double result = 0;
-    std::complex<double> complexResult(0,0);
     
     if(nargs_equal(args,1)){
         if (args[0].isHeadNumber()){
             result = sin(args[0].head().asNumber());
         } else if (args[0].isHeadComplex()){
-            complexResult = sin(args[0].head().asComplex());
-            return Expression(complexResult);
+            return Expression(sin(args[0].head().asComplex()));
         } else {
-            throw SemanticError("Error: in call to sin invalid argument");
+            throw SemanticError("Error in call to sin: invalid argument");
         }
     }
     else {
-        throw SemanticError("Error: in call to sin invalid number of arguments");
+        throw SemanticError("Error in call to sin: invalid number of arguments");
     }
     
     return Expression(result);
@@ -319,20 +317,18 @@ Expression sin(const std::vector<Expression> & args){
 Expression cos(const std::vector<Expression> & args){
     
     double result = 0;
-    std::complex<double> complexResult(0,0);
     
     if(nargs_equal(args,1)){
         if (args[0].isHeadNumber()){
             result = cos(args[0].head().asNumber());
         } else if (args[0].isHeadComplex()){
-            complexResult = cos(args[0].head().asComplex());
-            return Expression(complexResult);
+            return Expression(cos(args[0].head().asComplex()));
         } else {
-            throw SemanticError("Error: in call to cos invalid argument");
+            throw SemanticError("Error in call to cos: invalid argument");
         }
     }
     else {
-        throw SemanticError("Error: in call to cos invalid number of arguments");
+        throw SemanticError("Error in call to cos: invalid number of arguments");
     }
     
     return Expression(result);
