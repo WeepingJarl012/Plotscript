@@ -299,7 +299,11 @@ Expression sin(const std::vector<Expression> & args){
     double result = 0;
     
     if(nargs_equal(args,1)){
-        result = sin(args[0].head().asNumber());
+        if (args[0].isHeadComplex() || args[0].isHeadNumber()){
+            result = sin(args[0].head().asNumber());
+        } else {
+            throw SemanticError("Error in call to sin: invalid argument");
+        }
     }
     else {
         throw SemanticError("Error in call to sin: invalid number of arguments");
@@ -313,7 +317,11 @@ Expression cos(const std::vector<Expression> & args){
     double result = 0;
     
     if(nargs_equal(args,1)){
-        result = cos(args[0].head().asNumber());
+        if (args[0].isHeadComplex() || args[0].isHeadNumber()){
+            result = cos(args[0].head().asNumber());
+        } else {
+            throw SemanticError("Error in call to cos: invalid argument");
+        }
     }
     else {
         throw SemanticError("Error in call to cos: invalid number of arguments");
