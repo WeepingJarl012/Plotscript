@@ -3,6 +3,7 @@
 
 #include <queue>
 #include <mutex>
+#include <condition_variable>
 #include "expression.hpp"
 
 template<typename T>
@@ -48,9 +49,9 @@ public:
     }
     
 private:
+    std::condition_variable the_condition_variable;
     std::queue<T> the_queue;
     mutable std::mutex the_mutex;
-    std::condition_variable the_condition_variable;
 };
 
 #endif
