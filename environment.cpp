@@ -302,9 +302,10 @@ Expression sin(const std::vector<Expression> & args){
         if (args[0].isHeadNumber()){
             result = sin(args[0].head().asNumber());
         } else if (args[0].isHeadComplex()){
-            return Expression(sin(args[0].head().asComplex()));
+            std::complex<double> complexResult = sin(args[0].head().asComplex());
+            return Expression(complexResult);
         } else {
-            throw SemanticError("Error in call to sin: invalid argument");
+            throw SemanticError("Error: in call to sin invalid argument");
         }
     }
     else {
@@ -322,9 +323,10 @@ Expression cos(const std::vector<Expression> & args){
         if (args[0].isHeadNumber()){
             result = cos(args[0].head().asNumber());
         } else if (args[0].isHeadComplex()){
-            return Expression(cos(args[0].head().asComplex()));
+            std::complex<double> complexResult = cos(args[0].head().asComplex());
+            return Expression(complexResult);
         } else {
-            throw SemanticError("Error in call to cos: invalid argument");
+            throw SemanticError("Error: in call to cos invalid argument");
         }
     }
     else {
