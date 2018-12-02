@@ -1257,10 +1257,10 @@ TEST_CASE( "Test thread safe map", "[interpreter]" ) {
         Expression result;
         std::size_t j = 0;
         while(myMap.find("key" + std::to_string(j), result)){
-            std::cout << result << " ";
+            // std::cout << result << " ";
             j++;
         }
-        std::cout << "\n";
+        // std::cout << "\n";
     }
     
     th1.join();
