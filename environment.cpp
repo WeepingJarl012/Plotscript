@@ -339,7 +339,13 @@ Expression tan(const std::vector<Expression> & args){
     double result = 0;
     
     if(nargs_equal(args,1)){
-        result = tan(args[0].head().asNumber());
+        if (args[0].isHeadNumber()){
+            result = tan(args[0].head().asNumber());
+        } else if (args[0].isHeadComplex()){
+            return Expression(tan(args[0].head().asComplex()));
+        } else {
+            throw SemanticError("Error in call to tan: invalid argument");
+        }
     }
     else {
         throw SemanticError("Error in call to tan: invalid number of arguments");
