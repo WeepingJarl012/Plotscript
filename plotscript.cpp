@@ -10,8 +10,8 @@
 
 struct Message {
     Expression expression;
-    SemanticError error;
     bool isError;  // Whether there was an error or not
+    std::string errorMsg;
 };
 
 void prompt(){
@@ -92,10 +92,13 @@ int eval_from_command(std::string argexp){
     return eval_from_stream(expression);
 }
 
-void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Expression> & outputQueue){
+void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & outputQueue){
+    
+    Interpreter interp;
     
     while (true){
-        Interpreter interp;
+        
+        Message outputMsg;
         
         std::string line;
         if (inputQueue.try_pop(line)){
@@ -104,14 +107,21 @@ void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Expression> 
             
             
             if(!interp.parseStream(expression)){
-                error("Invalid Expression. Could not parse.");
+                outputMsg.isError = true;
+                outputQueue.push(outputMsg);
+                // error("Invalid Expression. Could not parse.");
+                outputMsg.errorMsg = "Invalid Expression. Could not parse.";
             }
             else{
                 try{
                     Expression exp = interp.evaluate(); // Output created
-                    outputQueue.push(exp);
+                    outputMsg.isError = false;
+                    outputMsg.expression = exp;
+                    outputQueue.push(outputMsg);
                 }
                 catch(const SemanticError & ex){
+                    outputMsg.isError = true;
+                    outputQueue.push(outputMsg);
                     std::cerr << ex.what() << std::endl;
                 }
             }
@@ -125,7 +135,7 @@ void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Expression> 
 void repl(){
     
     MessageQueue<std::string> inputQueue;
-    MessageQueue<Expression> outputQueue;
+    MessageQueue<Message> outputQueue;
     
     std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue));
     
@@ -135,9 +145,9 @@ void repl(){
         error("Could not open startup file for reading.");
     }
     
+    Message outputMsg;
+    
     while(!std::cin.eof()){
-        
-        Expression exp;
         
         prompt();
         std::string line = readline();
@@ -146,8 +156,16 @@ void repl(){
         
         inputQueue.push(line);
         
-        outputQueue.wait_and_pop(exp);
-        std::cout << exp << std::endl;
+        outputQueue.wait_and_pop(outputMsg);
+        
+        if (!outputMsg.isError){
+            Expression exp = outputMsg.expression;
+            
+            std::cout << exp << std::endl;
+        } else {
+            outputMsg.isError = false;
+            error(outputMsg.errorMsg);
+        }
     }
     
     interpretThread.join();
