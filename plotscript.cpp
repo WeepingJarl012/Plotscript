@@ -108,9 +108,9 @@ void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & o
             
             if(!interp.parseStream(expression)){
                 outputMsg.isError = true;
+                outputMsg.errorMsg = "Invalid Expression. Could not parse.";
                 outputQueue.push(outputMsg);
                 // error("Invalid Expression. Could not parse.");
-                outputMsg.errorMsg = "Invalid Expression. Could not parse.";
             }
             else{
                 try{
@@ -164,7 +164,9 @@ void repl(){
             std::cout << exp << std::endl;
         } else {
             outputMsg.isError = false;
-            error(outputMsg.errorMsg);
+            if (outputMsg.errorMsg != ""){
+                error(outputMsg.errorMsg);
+            }
         }
     }
     
