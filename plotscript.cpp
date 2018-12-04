@@ -10,7 +10,8 @@
 
 struct Message {
     Expression expression;
-    
+    SemanticError error;
+    bool isError;  // Whether there was an error or not
 };
 
 void prompt(){
@@ -92,24 +93,27 @@ int eval_from_command(std::string argexp){
 }
 
 void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Expression> & outputQueue){
-    Interpreter interp;
     
-    std::string line;
-    while (inputQueue.try_pop(line)){
-    
-        std::istringstream expression(line);
+    while (true){
+        Interpreter interp;
         
+        std::string line;
+        if (inputQueue.try_pop(line)){
         
-        if(!interp.parseStream(expression)){
-            error("Invalid Expression. Could not parse.");
-        }
-        else{
-            try{
-                Expression exp = interp.evaluate(); // Output created
-                outputQueue.push(exp);
+            std::istringstream expression(line);
+            
+            
+            if(!interp.parseStream(expression)){
+                error("Invalid Expression. Could not parse.");
             }
-            catch(const SemanticError & ex){
-                std::cerr << ex.what() << std::endl;
+            else{
+                try{
+                    Expression exp = interp.evaluate(); // Output created
+                    outputQueue.push(exp);
+                }
+                catch(const SemanticError & ex){
+                    std::cerr << ex.what() << std::endl;
+                }
             }
         }
     }
@@ -131,52 +135,19 @@ void repl(){
         error("Could not open startup file for reading.");
     }
     
-    /*
-    if(!interp.parseStream(startup_stream)){
-        error("Invalid Program. Could not parse start up file.");
-    }
-    else{
-        try{
-            Expression exp = interp.evaluate();
-        }
-        catch(const SemanticError & ex){
-            std::cerr << ex.what() << std::endl;
-        }
-    }
-     */
-    
     while(!std::cin.eof()){
         
         Expression exp;
         
-        while (outputQueue.try_pop(exp)){
-            std::cout << exp << std::endl;
-        }
-        
         prompt();
         std::string line = readline();
         
-        // if(line.empty()) continue;
+        if(line.empty()) continue;
         
         inputQueue.push(line);
         
-        /*
-        std::istringstream expression(line);
-        
-        
-        if(!interp.parseStream(expression)){
-            error("Invalid Expression. Could not parse.");
-        }
-        else{
-            try{
-                Expression exp = interp.evaluate(); // Output created
-                std::cout << exp << std::endl;
-            }
-            catch(const SemanticError & ex){
-                std::cerr << ex.what() << std::endl;
-            }
-        }
-         */
+        outputQueue.wait_and_pop(exp);
+        std::cout << exp << std::endl;
     }
     
     interpretThread.join();
