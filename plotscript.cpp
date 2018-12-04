@@ -2,10 +2,16 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <thread>
 
 #include "interpreter.hpp"
 #include "semantic_error.hpp"
 #include "startup_config.hpp"
+
+struct Message {
+    Expression expression;
+    
+};
 
 void prompt(){
     std::cout << "\nplotscript> ";
@@ -85,9 +91,39 @@ int eval_from_command(std::string argexp){
     return eval_from_stream(expression);
 }
 
+void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Expression> & outputQueue){
+    Interpreter interp;
+    
+    std::string line;
+    while (inputQueue.try_pop(line)){
+    
+        std::istringstream expression(line);
+        
+        
+        if(!interp.parseStream(expression)){
+            error("Invalid Expression. Could not parse.");
+        }
+        else{
+            try{
+                Expression exp = interp.evaluate(); // Output created
+                outputQueue.push(exp);
+            }
+            catch(const SemanticError & ex){
+                std::cerr << ex.what() << std::endl;
+            }
+        }
+    }
+    
+    
+}
+
 // A REPL is a repeated read-eval-print loop
 void repl(){
-    Interpreter interp;
+    
+    MessageQueue<std::string> inputQueue;
+    MessageQueue<Expression> outputQueue;
+    
+    std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue));
     
     std::ifstream startup_stream(STARTUP_FILE);
     
@@ -95,6 +131,7 @@ void repl(){
         error("Could not open startup file for reading.");
     }
     
+    /*
     if(!interp.parseStream(startup_stream)){
         error("Invalid Program. Could not parse start up file.");
     }
@@ -106,15 +143,26 @@ void repl(){
             std::cerr << ex.what() << std::endl;
         }
     }
+     */
     
     while(!std::cin.eof()){
+        
+        Expression exp;
+        
+        while (outputQueue.try_pop(exp)){
+            std::cout << exp << std::endl;
+        }
         
         prompt();
         std::string line = readline();
         
-        if(line.empty()) continue;
+        // if(line.empty()) continue;
         
+        inputQueue.push(line);
+        
+        /*
         std::istringstream expression(line);
+        
         
         if(!interp.parseStream(expression)){
             error("Invalid Expression. Could not parse.");
@@ -128,7 +176,10 @@ void repl(){
                 std::cerr << ex.what() << std::endl;
             }
         }
+         */
     }
+    
+    interpretThread.join();
 }
 
 int main(int argc, char *argv[])
