@@ -92,11 +92,11 @@ int eval_from_command(std::string argexp){
     return eval_from_stream(expression);
 }
 
-void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & outputQueue){
+void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & outputQueue, bool & runInterpreter){
     
     Interpreter interp;
     
-    while (true){
+    while (runInterpreter){
         
         Message outputMsg;
         
@@ -137,7 +137,9 @@ void repl(){
     MessageQueue<std::string> inputQueue;
     MessageQueue<Message> outputQueue;
     
-    std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue));
+    bool runInterpreter = true;
+    
+    std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter));
     
     std::ifstream startup_stream(STARTUP_FILE);
     
@@ -152,21 +154,36 @@ void repl(){
         prompt();
         std::string line = readline();
         
+        if (runInterpreter && line == "%stop"){
+            runInterpreter = false;
+            interpretThread.join();
+            continue;
+        }
+        
+        if (!runInterpreter && line == "%start"){
+            runInterpreter = true;
+            continue;
+        }
+        
         if(line.empty()) continue;
         
-        inputQueue.push(line);
-        
-        outputQueue.wait_and_pop(outputMsg);
-        
-        if (!outputMsg.isError){
-            Expression exp = outputMsg.expression;
+        if (runInterpreter){
+            inputQueue.push(line);
             
-            std::cout << exp << std::endl;
-        } else {
-            outputMsg.isError = false;
-            if (outputMsg.errorMsg != ""){
-                error(outputMsg.errorMsg);
+            outputQueue.wait_and_pop(outputMsg);
+            
+            if (!outputMsg.isError){
+                Expression exp = outputMsg.expression;
+                
+                std::cout << exp << std::endl;
+            } else {
+                outputMsg.isError = false;
+                if (outputMsg.errorMsg != ""){
+                    error(outputMsg.errorMsg);
+                }
             }
+        } else {
+            error("interpreter kernel not running");
         }
     }
     
