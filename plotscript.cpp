@@ -99,6 +99,7 @@ void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & o
     
     Message outputMsg;
     
+    /*
     std::ifstream startup_stream(STARTUP_FILE);
     
     if(!startup_stream){
@@ -123,6 +124,7 @@ void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & o
             std::cerr << ex.what() << std::endl;
         }
     }
+     */
     
     while (runInterpreter){
         
