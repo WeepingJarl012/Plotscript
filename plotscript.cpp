@@ -94,7 +94,7 @@ int eval_from_command(std::string argexp){
     return eval_from_stream(expression);
 }
 
-void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & outputQueue, std::atomic_bool & runInterpreter, Interpreter & interp){
+void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & outputQueue, std::atomic_bool & runInterpreter, Interpreter * interp){
     
     // Interpreter interp;
     
@@ -108,14 +108,14 @@ void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & o
         outputQueue.push(outputMsg);
     }
     
-    if(!interp.parseStream(startup_stream)){
+    if(!(*interp).parseStream(startup_stream)){
         outputMsg.isError = true;
         outputMsg.errorMsg = "Invalid Program. Could not parse start up file.";
         outputQueue.push(outputMsg);
     }
     else{
         try{
-            Expression exp = interp.evaluate();
+            Expression exp = (*interp).evaluate();
             outputMsg.isError = false;
         }
         catch(const SemanticError & ex){
@@ -133,14 +133,14 @@ void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & o
             std::istringstream expression(line);
             
             
-            if(!interp.parseStream(expression)){
+            if(!(*interp).parseStream(expression)){
                 outputMsg.isError = true;
                 outputMsg.errorMsg = "Invalid Expression. Could not parse.";
                 outputQueue.push(outputMsg);
             }
             else{
                 try{
-                    Expression exp = interp.evaluate(); // Output created
+                    Expression exp = (*interp).evaluate(); // Output created
                     outputMsg.isError = false;
                     outputMsg.expression = exp;
                     outputQueue.push(outputMsg);
@@ -168,7 +168,7 @@ int repl(){
     
     runInterpreter = true;
     
-    std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter), std::ref(interp));
+    std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter), &interp);
     
     Message outputMsg;
     
@@ -187,7 +187,7 @@ int repl(){
         }
         
         if (!runInterpreter && line == "%start"){
-            std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter), std::ref(interp));
+            std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter), &interp);
             runInterpreter = true;
             if (interpretThread.joinable()){
                 interpretThread.detach();
@@ -206,7 +206,7 @@ int repl(){
             Interpreter * newInterp = new Interpreter();
             
             // Start the thread
-            std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter), std::ref(newInterp));
+            std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter), newInterp);
             runInterpreter = true;
             if (interpretThread.joinable()){
                 interpretThread.detach();
