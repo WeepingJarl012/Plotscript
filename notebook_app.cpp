@@ -28,7 +28,12 @@ NotebookApp::NotebookApp(QWidget * parent){
     auto layout = new QGridLayout();
     layout->addWidget(input, 1, 0);
     layout->addWidget(output, 2, 0);
-    layout->addWidget(start, 0, 0);
+    auto buttons = new QHBoxLayout();
+    buttons->addWidget(start);
+    buttons->addWidget(stop);
+    buttons->addWidget(reset);
+    buttons->addWidget(interrupt);
+    layout->addLayout(buttons, 0, 0);
     
     setLayout(layout);
 }
