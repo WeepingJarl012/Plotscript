@@ -94,9 +94,9 @@ int eval_from_command(std::string argexp){
     return eval_from_stream(expression);
 }
 
-void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & outputQueue, std::atomic_bool & runInterpreter){
+void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & outputQueue, std::atomic_bool & runInterpreter, Interpreter & interp){
     
-    Interpreter interp;
+    // Interpreter interp;
     
     Message outputMsg;
     
@@ -164,9 +164,11 @@ int repl(){
     
     std::atomic_bool runInterpreter;
     
+    Interpreter interp;
+    
     runInterpreter = true;
     
-    std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter));
+    std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter), std::ref(interp));
     
     Message outputMsg;
     
@@ -185,7 +187,7 @@ int repl(){
         }
         
         if (!runInterpreter && line == "%start"){
-            std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter));
+            std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter), std::ref(interp));
             runInterpreter = true;
             if (interpretThread.joinable()){
                 interpretThread.detach();
@@ -201,8 +203,10 @@ int repl(){
             }
             interpretThread.~thread();
             
+            Interpreter * newInterp = new Interpreter();
+            
             // Start the thread
-            std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter));
+            std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter), std::ref(newInterp));
             runInterpreter = true;
             if (interpretThread.joinable()){
                 interpretThread.detach();
