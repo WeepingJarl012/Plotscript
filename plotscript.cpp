@@ -99,7 +99,6 @@ void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & o
     
     Message outputMsg;
     
-    /*
     std::ifstream startup_stream(STARTUP_FILE);
     
     if(!startup_stream){
@@ -124,7 +123,6 @@ void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & o
             std::cerr << ex.what() << std::endl;
         }
     }
-     */
     
     while (runInterpreter){
         
@@ -168,12 +166,6 @@ void repl(){
     runInterpreter = true;
     
     std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter));
-    
-    std::ifstream startup_stream(STARTUP_FILE);
-    
-    if(!startup_stream){
-        error("Could not open startup file for reading.");
-    }
     
     Message outputMsg;
     
