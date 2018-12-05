@@ -192,7 +192,7 @@ void repl(){
             continue;
         }
         
-        if (runInterpreter && line == "%reset"){
+        if (line == "%reset"){
             // Stop the thread
             runInterpreter = false;
             if (interpretThread.joinable()){
