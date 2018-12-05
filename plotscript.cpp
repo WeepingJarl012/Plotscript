@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <thread>
+#include <atomic>
 
 #include "interpreter.hpp"
 #include "semantic_error.hpp"
@@ -92,13 +93,38 @@ int eval_from_command(std::string argexp){
     return eval_from_stream(expression);
 }
 
-void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & outputQueue, bool & runInterpreter){
+void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & outputQueue, std::atomic_bool & runInterpreter){
     
     Interpreter interp;
     
+    Message outputMsg;
+    
+    std::ifstream startup_stream(STARTUP_FILE);
+    
+    if(!startup_stream){
+        outputMsg.isError = true;
+        outputMsg.errorMsg = "Could not open startup file for reading.";
+        outputQueue.push(outputMsg);
+    }
+    
+    if(!interp.parseStream(startup_stream)){
+        outputMsg.isError = true;
+        outputMsg.errorMsg = "Invalid Program. Could not parse start up file.";
+        outputQueue.push(outputMsg);
+    }
+    else{
+        try{
+            Expression exp = interp.evaluate();
+            outputMsg.isError = false;
+        }
+        catch(const SemanticError & ex){
+            outputMsg.isError = true;
+            outputQueue.push(outputMsg);
+            std::cerr << ex.what() << std::endl;
+        }
+    }
+    
     while (runInterpreter){
-        
-        Message outputMsg;
         
         std::string line;
         if (inputQueue.try_pop(line)){
@@ -110,7 +136,6 @@ void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & o
                 outputMsg.isError = true;
                 outputMsg.errorMsg = "Invalid Expression. Could not parse.";
                 outputQueue.push(outputMsg);
-                // error("Invalid Expression. Could not parse.");
             }
             else{
                 try{
@@ -127,8 +152,7 @@ void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & o
             }
         }
     }
-    
-    
+
 }
 
 // A REPL is a repeated read-eval-print loop
@@ -137,7 +161,9 @@ void repl(){
     MessageQueue<std::string> inputQueue;
     MessageQueue<Message> outputQueue;
     
-    bool runInterpreter = true;
+    std::atomic_bool runInterpreter;
+    
+    runInterpreter = true;
     
     std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter));
     
