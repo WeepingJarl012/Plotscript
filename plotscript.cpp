@@ -4,6 +4,7 @@
 #include <fstream>
 #include <thread>
 #include <atomic>
+#include <chrono>
 
 #include "interpreter.hpp"
 #include "semantic_error.hpp"
@@ -156,7 +157,7 @@ void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & o
 }
 
 // A REPL is a repeated read-eval-print loop
-void repl(){
+int repl(){
     
     MessageQueue<std::string> inputQueue;
     MessageQueue<Message> outputQueue;
@@ -200,6 +201,8 @@ void repl(){
             }
             interpretThread.~thread();
             
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            
             // Start the thread
             std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter));
             runInterpreter = true;
@@ -208,6 +211,16 @@ void repl(){
             }
             continue;
         }
+        
+        if (line == "%exit"){
+            runInterpreter = false;
+            if (interpretThread.joinable()){
+                interpretThread.join();
+            }
+            interpretThread.~thread();
+            return EXIT_SUCCESS;
+        }
+        
         
         if(line.empty()) continue;
         
@@ -235,6 +248,7 @@ void repl(){
     if (interpretThread.joinable()){
         interpretThread.join();
     }
+    return EXIT_SUCCESS;
 }
 
 int main(int argc, char *argv[])
@@ -251,7 +265,7 @@ int main(int argc, char *argv[])
         }
     }
     else{
-        repl();
+        return repl();
     }
     
     return EXIT_SUCCESS;
