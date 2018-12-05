@@ -11,6 +11,14 @@ InputWidget::InputWidget(QWidget * parent){
     
     parseError = false;
     exceptionError = false;
+    
+    runInterpreter = true;
+    
+    std::thread interpretThread(&InputWidget::interpret, &inputQueue, &outputQueue, &runInterpreter, &interp);
+}
+
+void InputWidget::interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & outputQueue, bool & runInterpreter, Interpreter * interp){
+    
 }
 
 
