@@ -25,23 +25,8 @@ public:
     bool checkExceptionError();
     
 private:
-    
-    struct Message {
-        Expression expression;
-        bool isError;  // Whether there was an error or not
-        std::string errorMsg;
-    };
-    
     Expression exp;
     Interpreter interp;
-    
-    // Threading stuff
-    void interpret(MessageQueue<std::string> & inputQueue, MessageQueue<Message> & outputQueue, bool & runInterpreter, Interpreter * interp);
-    
-    bool runInterpreter;
-    
-    MessageQueue<std::string> inputQueue;
-    MessageQueue<Message> outputQueue;
     
     // Keep track if there is a parse error or semantic error
     bool parseError;

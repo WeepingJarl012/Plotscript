@@ -43,6 +43,7 @@ set(gui_src
   input_widget.cpp input_widget.hpp
 	notebook_app.cpp notebook_app.hpp
   output_widget.cpp output_widget.hpp
+  interpreter_thread.cpp interpreter_thread.hpp
   )
 
 # EDIT
