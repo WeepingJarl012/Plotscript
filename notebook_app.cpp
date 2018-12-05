@@ -11,14 +11,24 @@ NotebookApp::NotebookApp(QWidget * parent){
     input->setObjectName("input");
     output->setObjectName("output");
     
+    start = new QPushButton("Start Kernel", parent);
+    stop = new QPushButton("Stop Kernel", parent);
+    reset = new QPushButton("Reset Kernel", parent);
+    interrupt = new QPushButton("Interrupt", parent);
+    start->setObjectName("start");
+    stop->setObjectName("stop");
+    reset->setObjectName("reset");
+    interrupt->setObjectName("interrupt");
+    
     // QObject::connect(input, &InputWidget::textEvaluated, output, &OutputWidget::updateOutput);
     QObject::connect(input, SIGNAL(textEvaluated()), this, SLOT(changeOutput()));
     QObject::connect(this, &NotebookApp::outputChanged, output, &OutputWidget::updateOutput);
     QObject::connect(this, &NotebookApp::outputChangedError, output, &OutputWidget::updateOutputError);
     
     auto layout = new QGridLayout();
-    layout->addWidget(input, 0, 0);
-    layout->addWidget(output, 1, 0);
+    layout->addWidget(input, 1, 0);
+    layout->addWidget(output, 2, 0);
+    layout->addWidget(start, 0, 0);
     
     setLayout(layout);
 }

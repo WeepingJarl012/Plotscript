@@ -201,8 +201,6 @@ int repl(){
             }
             interpretThread.~thread();
             
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            
             // Start the thread
             std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter));
             runInterpreter = true;

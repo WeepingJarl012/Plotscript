@@ -2,6 +2,7 @@
 #define NOTEBOOKAPP_H
 
 #include <QWidget>
+#include <QPushButton>
 #include "input_widget.hpp"
 #include "output_widget.hpp"
 
@@ -14,6 +15,10 @@ private:
     
     InputWidget * input;
     OutputWidget * output;
+    QPushButton * start;
+    QPushButton * stop;
+    QPushButton * reset;
+    QPushButton * interrupt;
     
     
 private slots:
