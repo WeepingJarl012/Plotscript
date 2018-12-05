@@ -192,6 +192,23 @@ void repl(){
             continue;
         }
         
+        if (runInterpreter && line == "%reset"){
+            // Stop the thread
+            runInterpreter = false;
+            if (interpretThread.joinable()){
+                interpretThread.join();
+            }
+            interpretThread.~thread();
+            
+            // Start the thread
+            std::thread interpretThread(interpret, std::ref(inputQueue), std::ref(outputQueue), std::ref(runInterpreter));
+            runInterpreter = true;
+            if (interpretThread.joinable()){
+                interpretThread.detach();
+            }
+            continue;
+        }
+        
         if(line.empty()) continue;
         
         if (runInterpreter){
